@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="images/xiyoulinux.png">
+    <title>西邮Linux兴趣小组</title>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+</head>
+
+<body>
+
+<!--导航栏-->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation" id="header">
+    <script>
+        $(function () {
+            $("#header").load("header.html");
+        })
+    </script>
+</div>
+<!--导航栏结束-->
+
+<div id="service">
+    <div class="container">
+        <div class="row centered" id="service-list">
+            <div class="col-md-2 col-sm-3 col-xs-6">
+                <div class="hexicon">
+                    <a href="http://blog.xiyoulinux.org/">
+                        <div class="inicon blogicon"></div>
+                    </a>
+                </div>
+                <h4>群博<a href="http://blog.xiyoulinux.org/"><i class="fa  fa-arrow-circle-right"></i></a>
+                </h4>
+                <p>这里是技术的天堂</p>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-6">
+                <div class="hexicon">
+                    <a href="https://www.xiyoulinux.org/IRC.html">
+                        <div class="inicon wikiicon"></div>
+                    </a>
+                </div>
+                <h4>IRC<a href="IRC.html"><i class="fa fa-arrow-circle-right"></i></a>
+                </h4>
+                <p>来这里聊天</p>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-6">
+                <div class="hexicon">
+                    <a href="https://groups.google.com/forum/#!forum/xiyoulinux">
+                        <div class="inicon ircicon"></div>
+                    </a>
+                </div>
+                <h4>邮件列表<a href="https://groups.google.com/forum/#!forum/xiyoulinux"><i class="fa fa-arrow-circle-right"></i></a>
+                </h4>
+                <p>不要错过我们的一切</p>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-6">
+                <div class="hexicon">
+                    <a href="https://github.com/xiyou-linuxer">
+                        <div class="inicon mailicon"></div>
+                    </a>
+                </div>
+                <h4>小组资源<a href="https://github.com/xiyou-linuxer"><i class="fa fa-arrow-circle-right"></i></a></h4>
+                <p>我们的项目展示</p>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-6">
+                <div class="hexicon">
+                    <a href="http://wiki.xiyoulinux.org/">
+                        <div class="inicon resourceicon"></div>
+                    </a>
+                </div>
+                <h4>WIKI<a href="http://wiki.xiyoulinux.org/"><i class="fa fa-arrow-circle-right"></i></a>
+                </h4>
+                <p>快来一起编辑吧</p>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-6">
+                <div class="hexicon">
+                    <a href="http://join.xiyoulinux.org/">
+                        <div class="inicon othericon"></div>
+                    </a>
+                </div>
+                <h4>纳新报名<a href="http://join.xiyoulinux.org/"><i class="fa fa-arrow-circle-right"></i></a>
+                </h4>
+                <p>快来加入我们吧</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div id="recent-posts" class="col-md-6 col-md-push-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4>最近文章</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="post">
+                        <div class="post-title">
+                            <a href="http://blog.xiyoulinux.org/detail.jsp?id=5616" target="_blank">
+                                <h4><i class="fa fa-file-text-o"></i>&nbsp;&nbsp;  [转]C++ 虚函数表解析</h4>
+                            </a>
+                        </div>
+                        <div class="post-meta">小明
+                            ,&nbsp;&nbsp;  2018-04-24&nbsp;&nbsp;11:59:24
+                        </div>
+                        <div class="post-abstract">
+    前言 C++中的虚函数的作用主要是实现了多态的机制。关于多态，简而言之就是用父类型别的指针指向其子类的实例，然后通过父类的指针调用实际子类的成员函数。这种技术可以让父类的指针有“多种形态”，这是一种泛型技术。所谓泛型技术，说白了就是试图使用不变的代码来实现可变的算法。比如：模板技术，RTTI技术，虚函数技术，要么是试图做到在编译时决议，要么试图做到运行时决议。 关于虚函数的使用方法，我在这里不做过多的阐述。大家可以看看相关的C++的书籍。在这篇文章中，我只想从虚函数的实现机制上面为大家 一个清晰&nbsp;<a
+                                href="http://blog.xiyoulinux.org/detail.jsp?id=5616">>>></a>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <a href="http://blog.xiyoulinux.org"><i class="fa fa-arrow-circle-right"></i> 所有文章</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="recent-events" class="col-md-6 col-md-pull-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4>活动公告</h4>
+                </div>
+                <div class="panel-body">
+                    <div class="event" data-event-date="2018-06-09">
+                        <div class="event-title">
+                            <a href="events.html?id=1" target="_blank">
+                                <h4><i class="fa fa-bullhorn"></i>&nbsp;&nbsp;  首届学生开源年会 SOSCON 将于6月在重庆大学举办</h4>
+                            </a>
+                        </div>
+                        <div class="event-meta">
+                            <span><strong>时间: </strong>2018-06-09&nbsp;&nbsp;09:00:00</span>
+                            <span><strong>地点:</strong>重庆</span>
+                            <span class="label label-info">AAA</span>
+                            <span class="label label-info">AAA</span>
+                            <span class="label label-info">AAA</span>
+                        </div>
+                        <div class="event-abstract">
+    前言 C++中的虚函数的作用主要是实现了多态的机制。关于多态，简而言之就是用父类型别的指针指向其子类的实例，然后通过父类的指针调用实际子类的成员函数。这种技术可以让父类的指针有“多种形态”，这是一种泛型技术。所谓泛型技术，说白了就是试图使用不变的代码来实现可变的算法。比如：模板技术，RTTI技术，虚函数技术，要么是试图做到在编译时决议，要么试图做到运行时决议。 关于虚函数的使用方法，我在这里不做过多的阐述。大家可以看看相关的C++的书籍。在这篇文章中，我只想从虚函数的实现机制上面为大家 一个清晰&nbsp;<a
+    href="eventsview.html">>>></a>
+                        </div>
+                    </div>
+                    <br/>
+                    <div>
+                        <a href="events.html"><i class="fa fa-arrow-circle-right"></i> 所有活动</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--网站底部-->
+<footer id="footer">
+    <script>
+        $(function () {
+            $("#footer").load("footer.html");
+        })
+    </script>
+</footer>
+<!--网站底部-->
+
+
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/retina-1.1.0.js"></script>
+<script type="text/javascript" src="js/jquery.hoverdir.js"></script>
+<script type="text/javascript" src="js/jquery.hoverex.min.js"></script>
+<script type="text/javascript" src="js/jquery.prettyPhoto.js"></script>
+<script type="text/javascript" src="js/jquery.isotope.min.js"></script>
+<script type="text/javascript" src="js/custom.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var today = function () {
+            var pad = function (number) {
+                var r = String(number);
+                if (r.length === 1) {
+                    r = '0' + r;
+                }
+                return r;
+            };
+            var _today = new Date();
+            return Date.parse(
+                _today.getFullYear().toString() + "-"
+                + pad(_today.getMonth() + 1) + "-"
+                + pad(_today.getDate())
+            );
+        }();
+        $('#recent-events .event').each(function () {
+            var event_date = Date.parse($(this).attr("data-event-date")),
+                label = "";
+            if (today > event_date) {
+                label = "<span class='label label-default'>Finished</span>";
+            } else if (today < event_date) {
+                label = "<span class='label label-warning'>Upcoming</span>";
+            } else {
+                label = "<span class='label label-primary'>Finishing</span>";
+            }
+            $(this).find(".event-meta").append(label);
+        });
+        $('.container .copy-right-content').each(function () {
+            var year = new Date().getFullYear();
+            $(this).find(".year").append(year);
+        })
+    });
+</script>
+
+</body>
+</html>

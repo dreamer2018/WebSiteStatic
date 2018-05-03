@@ -33,9 +33,25 @@
         <li id="blog_page">
             <a href="blog.html"><i class="fa fa-fw fa-edit"></i>文章管理</a>
         </li>
+        <li id="news_page">
+            <a href="news.html"><i class="fa fa-fw fa-desktop"></i>新闻管理</a>
+        </li>
         <li id="title_page">
             <a href="title.html"><i class="fa fa-fw fa-desktop"></i>标题管理</a>
         </li>
+        <li id="project_page">
+            <a href="projects.html"><i class="fa fa-fw fa-desktop"></i>项目管理</a>
+        </li>
+        <li id="picture_page">
+            <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>照片管理</a>
+        </li>
+        <li id="devuser_page">
+            <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>开发者管理</a>
+        </li>
+        <li id="devgroup_page">
+        <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>开发组管理</a>
+        </li>
+    </li>
     </ul>
 </div>
 <!-- /.navbar-collapse -->
@@ -48,6 +64,12 @@
             $("#blog_page").attr("class", "active");
         }else if(url.search("title.html") >= 0){
             $("#title_page").attr("class", "active");
+        }else if(url.search("news.html") >= 0){
+            $("#news_page").attr("class", "active");
+        }else if(url.search("projects.html") >= 0){
+            $("#project_page").attr("class", "active");
+        }else if(url.search("pictures.html") >= 0){
+            $("#picture_page").attr("class", "active");
         }
     })
 </script>

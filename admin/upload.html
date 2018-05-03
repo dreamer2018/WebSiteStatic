@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input  type="file" name="file" id="file_upload">
+<button  type="button" onclick="FileUpload()">开始上传附件</button>
+
+<script src="js/jquery-1.10.2.min.js"></script>
+<script>
+    function FileUpload() {
+        let form_data = new FormData();
+        let file_info = $('#file_upload')[0].files[0];
+        form_data.append('file', file_info);
+        if(file_info == undefined){ //暂且不许要判断是否有附件
+            alert('你没有选择任何文件');
+            return false;
+        }
+
+        // 提交ajax的请求
+        $.ajax({
+            url:"/apis/upload/",
+            type:'POST',
+            data: form_data,
+            processData: false,  // tell jquery not to process the data
+            contentType: false, // tell jquery not to set contentType
+            success: function(callback) {
+                alert(callback);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            } 
+        }); // end ajax
+    }
+</script>
+</body>
+</html>

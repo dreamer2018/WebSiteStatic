@@ -6,13 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="../images/xiyoulinux.png">
     <title>西邮Linux兴趣小组官网-后台管理</title>
+
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
     <link href="css/sb-admin.css" rel="stylesheet">
     <link href="css/sb-bk-theme.css" rel="stylesheet">
     <link href="css/bk.css" rel="stylesheet">
     <link href="css/ui-dialog.css" rel="stylesheet">
-    <script src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/dialog-min.js"></script>
+
 </head>
 
 <body>
@@ -35,15 +39,17 @@
             <div class="row page-header-box">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        文章管理
+                        活动管理
                     </h1>
                 </div>
             </div>
 
+
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    文章列表
+                    活动列表
                 </div>
+
                 <div>
                     <div class="king-wrapper">
                         <form class="form-inline king-search-form king-no-bg mt15 mb15 pull-left"
@@ -58,27 +64,33 @@
                             </div>
                             <button type="button" class="king-btn king-info" onclick="search_by_title()">搜索</button>
                         </form>
+                        <a href="newsedit.html" class="king-btn king-info pull-right mt15 ml15"
+                           style="margin-right: 2%;">
+                            <i class="fa fa-user-plus mr5"></i>新增文章
+                        </a>
                     </div>
 
                     <table class="table table-out-bordered table-hover">
+                        <thead>
                         <tr>
-                            <th style="width:50px;">序号</th>
+                            <th style="width:50px;" class="tc">序号</th>
                             <th>标题</th>
-                            <th>作者</th>
                             <th>日期</th>
                             <th>时间</th>
+                            <th>阅读量</th>
                             <th>状态</th>
                             <th>操作</th>
                         </tr>
-                        <thead>
                         </thead>
                         <tbody id="tbody">
                         <tr>
                             <td>1</td>
-                            <td><a href="wwww" target="_blank">aaaaa</a></td>
-                            <td>xiaoming</td>
+                            <td>
+                                <a href="newsedit.html?id=1">AAAAAAAAAAA</a>
+                            </td>
                             <td>2018-01-01</td>
                             <td>19:00:00</td>
+                            <td>1000</td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm"
                                         onclick="change_status(1)" value="0">已停用
@@ -91,6 +103,9 @@
                                 <button type="button" class="btn btn-danger btn-sm"
                                         onclick="remind(1)">删除
                                 </button>
+                                <a href="newsview.html?id=1" target="_blank">
+                                    <button type="button" class="btn btn-success btn-sm">预览</button>
+                                </a>
                             </td>
                         <tr>
                         </tbody>
@@ -114,124 +129,22 @@
                     </table>
                 </div>
             </div>
-
         </div>
-
+        <!-- /.container-fluid -->
     </div>
-    <!-- /.container-fluid -->
-    <div id="test">
-    </div>
+    <!-- /#page-wrapper -->
 </div>
-<!-- /#page-wrapper -->
-<script src="js/bootstrap.min.js"></script>
-<script src="js/html5shiv.min.js"></script>
-<script src="js/respond.min.js"></script>
-<script type="text/javascript" src="js/dialog-min.js"></script>
 
 
-</div>
-<!-- /#wrapper -->
+
+
+
 <script>
-    /*通过异步传输XMLHTTP发送参数到ajaxServlet,返回符合条件的XML文档*/
     function search_by_title() {
-        var title = document.getElementById("title").value;
-        $.ajax({
-            type: 'GET',
-            url: '/apis/blog/?title='+title,
-            data: {},
-            success: function (data, result) {
-                // 正常返回
-                if ("success" == result){
-                    let json = JSON.parse(data);
-                    let page_count = json.page_count;
-                    let curr_page = json.curr_page;
-                    let all_count = json.all_count
-                    let blogs = json.data;
-                    //获取tbody节点
-                    let tbody = document.getElementById("tbody");
-                    //清空节点原内容
-                    tbody.innerHTML = "";
-                    //循环的塞入新的内容
-                    for (let i = 0; i < blogs.length; i++) {
-                        let id = i + 1 + 20 * (curr_page - 1);
-                        if (blogs[i].status == 0) {
-                            tbody.innerHTML += "<tbody>" +
-                                "<tr>" +
-                                "<td>" + id + "</td>" +
-                                "<td><a href=" + blogs[i].url + " target=\"_blank\">" + blogs[i].title + "</a></td>" +
-                                "<td>" + blogs[i].author + "</td>" +
-                                "<td>" + blogs[i].date + "</td>" +
-                                "<td>" + blogs[i].time + " </td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + blogs[i].bid + ')" value="0">已停用' +
-                                '</button>' +
-                                "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + blogs[i].bid + ')">删除' +
-                                '</button>' +
-                                "</td>" +
-                                "</tr>" +
-                                "</tbody>"
-                        } else {
-                            tbody.innerHTML += "<tbody>" +
-                                "<tr>" +
-                                "<td>" + id + "</td>" +
-                                "<td><a href=" + blogs[i].url + " target=\"_blank\">" + blogs[i].title + "</a></td>" +
-                                "<td>" + blogs[i].author + "</td>" +
-                                "<td>" + blogs[i].date + "</td>" +
-                                "<td>" + blogs[i].time + " </td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + blogs[i].bid + ')" value="1">已启用' +
-                                '</button>' +
-                                "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + blogs[i].bid + ')">删除' +
-                                '</button>' +
-                                "</td>" +
-                                "</tr>" +
-                                "</tbody>"
-                        }
-                    }
-                    //重新符之搜索title
-                    var record = document.getElementById("record");
-                    var paging = document.getElementById("paging");
-                    paging.innerHTML = "";
-                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
-                    if (page_count >= 7) {
-                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
-                            if (i < 0) {
-                                continue;
-                            }
-                            let id = i + 1;
-                            if (id == curr_page) {
-                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
-                            } else {
-                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
-                            }
-                        }
-                    } else {
-                        for (let i = 0; i < page_count; i++) {
-                            id = i + 1;
-                            if (id == curr_page) {
-                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
-                            } else {
-                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
-                            }
-                        }
-                    }
-                } else {
-                    alert("error!")
-                }
-            }
-
-        });
-    }
-    
-    function page_turning(page) {
         let title = document.getElementById("title").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/blog/?title='+ title +'&page=' + page,
+            url: '/apis/news/?title='+title,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -240,50 +153,43 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let blogs = json.data;
+                    let news = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < blogs.length; i++) {
+                    for (let i = 0; i < news.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (blogs[i].status == 0) {
-                            tbody.innerHTML += "<tbody>" +
-                                "<tr>" +
+                        if (news[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                "<td><a href=" + blogs[i].url + " target=\"_blank\">" + blogs[i].title + "</a></td>" +
-                                "<td>" + blogs[i].author + "</td>" +
-                                "<td>" + blogs[i].date + "</td>" +
-                                "<td>" + blogs[i].time + " </td>" +
+                                "<td><a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a></td>" +
+                                "<td>" + news[i].date + "</td>" +
+                                "<td>" + news[i].time + "</td>" +
+                                "<td>" + news[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + news[i].nid + ')" value="0">已停用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + blogs[i].bid + ')" value="0">已停用' +
-                                '</button>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除 </button>' +
+                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + blogs[i].bid + ')">删除' +
-                                '</button>' +
-                                "</td>" +
-                                "</tr>" +
-                                "</tbody>"
+                                "</tr>";
                         } else {
-                            tbody.innerHTML += "<tbody>" +
-                                "<tr>" +
+                            tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                "<td><a href=" + blogs[i].url + " target=\"_blank\">" + blogs[i].title + "</a></td>" +
-                                "<td>" + blogs[i].author + "</td>" +
-                                "<td>" + blogs[i].date + "</td>" +
-                                "<td>" + blogs[i].time + " </td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + blogs[i].bid + ')" value="1">已启用' +
-                                '</button>' +
+                                "<a href=\"newsedit.html" + news[i].nid + "\">" + news[i].title + "</a>" +
                                 "</td>" +
+                                "<td>" + news[i].date + "</td>" +
+                                "<td>" + news[i].time + "</td>" +
+                                "<td>" + news[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + news[i].nid + ')" value="1">已启用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + blogs[i].bid + ')">删除' +
-                                '</button>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除' +
+                                '</button> ' +
+                                '<a href= "newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
-                                "</tr>" +
-                                "</tbody>"
+                                "</tr>";
                         }
                     }
                     //重新符之搜索title
@@ -320,13 +226,13 @@
 
         });
     }
-    
+
     function change_status(id) {
         var but = event.target;
         $.ajax({
             type: 'POST',
-            url: '/apis/blog/status/',
-            data: {'bid': id},
+            url: '/apis/news/status/',
+            data: {'nid': id},
             success: function (data, result) {
                 if ('success' == result) {
                     // 正常返回
@@ -350,10 +256,12 @@
             }
         });
     }
-    function load_blog_data() {
+
+    function page_turning(page) {
+        let title = document.getElementById("title").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/blog/',
+            url: '/apis/news/?title='+ title +'&page=' + page,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -362,50 +270,129 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let blogs = json.data;
+                    let news = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < blogs.length; i++) {
+                    for (let i = 0; i < news.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (blogs[i].status == 0) {
-                            tbody.innerHTML += "<tbody>" +
-                                "<tr>" +
+                        if (news[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                "<td><a href=" + blogs[i].url + " target=\"_blank\">" + blogs[i].title + "</a></td>" +
-                                "<td>" + blogs[i].author + "</td>" +
-                                "<td>" + blogs[i].date + "</td>" +
-                                "<td>" + blogs[i].time + " </td>" +
+                                "<td><a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a></td>" +
+                                "<td>" + news[i].date + "</td>" +
+                                "<td>" + news[i].time + "</td>" +
+                                "<td>" + news[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + news[i].nid + ')" value="0">已停用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + blogs[i].bid + ')" value="0">已停用' +
-                                '</button>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除 </button>' +
+                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + blogs[i].bid + ')">删除' +
-                                '</button>' +
-                                "</td>" +
-                                "</tr>" +
-                                "</tbody>"
+                                "</tr>";
                         } else {
-                            tbody.innerHTML += "<tbody>" +
-                                "<tr>" +
+                            tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                "<td><a href=" + blogs[i].url + " target=\"_blank\">" + blogs[i].title + "</a></td>" +
-                                "<td>" + blogs[i].author + "</td>" +
-                                "<td>" + blogs[i].date + "</td>" +
-                                "<td>" + blogs[i].time + " </td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + blogs[i].bid + ')" value="1">已启用' +
-                                '</button>' +
+                                "<a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a>" +
                                 "</td>" +
+                                "<td>" + news[i].date + "</td>" +
+                                "<td>" + news[i].time + "</td>" +
+                                "<td>" + news[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + news[i].nid + ')" value="1">已启用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + blogs[i].bid + ')">删除' +
-                                '</button>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除' +
+                                '</button> ' +
+                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
-                                "</tr>" +
-                                "</tbody>"
+                                "</tr>";
+                        }
+                    }
+                    //重新符之搜索title
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        });
+    }
+
+    function load_event_data() {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/news/',
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let news = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < news.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        if (news[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td><a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a></td>" +
+                                "<td>" + news[i].date + "</td>" +
+                                "<td>" + news[i].time + "</td>" +
+                                "<td>" + news[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + news[i].nid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除 </button>' +
+                                '<a href="newsview.html?id=' + news[i].nid + ' "target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
+                        } else {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td>" +
+                                "<a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a>" +
+                                "</td>" +
+                                "<td>" + news[i].date + "</td>" +
+                                "<td>" + news[i].time + "</td>" +
+                                "<td>" + news[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + news[i].nid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除' +
+                                '</button> ' +
+                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
                         }
                     }
                     //重新符之搜索title
@@ -443,13 +430,14 @@
         })
     }
     $(document).ready(function () {
-        load_blog_data()
+        load_event_data()
     })
 </script>
 
 <script type="text/javascript">
+
     function remind(id) {
-        let d = dialog({
+        var d = dialog({
             width: 260,
             title: '消息提醒',
             content: '<h4>确定删除？</h4>',
@@ -457,20 +445,19 @@
             ok: function () {
                 $.ajax({
                     type: 'POST',
-                    url: '/apis/blog/delete/',
-                    data: {'bid': id},
+                    url: '/apis/news/delete/',
+                    data: {'nid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
-                                load_blog_data();
+                                load_event_data();
                             }else{
                                 alert("删除失败:" + json.message);
                             }
                         }
                     }
-
                 });
             },
             cancelValue: '取消',
@@ -484,3 +471,4 @@
 </body>
 
 </html>
+

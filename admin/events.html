@@ -57,12 +57,12 @@
                             <div class="form-group">
                                 <label>标题：</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="请输入文章标题" name="title"
+                                    <input type="text" class="form-control" placeholder="请输入标题" name="title"
                                            id="title"
-                                           value="aaaaaaaaaaaaaaa">
+                                           value="">
                                 </div>
                             </div>
-                            <button type="button" class="king-btn king-info" onclick="check(1)">搜索</button>
+                            <button type="button" class="king-btn king-info" onclick="search_by_title()">搜索</button>
                         </form>
                         <a href="eventsedit.html" class="king-btn king-info pull-right mt15 ml15"
                            style="margin-right: 2%;">
@@ -142,122 +142,304 @@
 
 
 <script>
-    function check(page) {
-        //自行修改访问的Servlet名和传递参数(get方式),也可使用post方式
-        //获取ajax对象
+    function search_by_title() {
         var title = document.getElementById("title").value;
-        $.post('/admin/events', {
-            page: page,
-            title: title,
-            type: 'ajax'
-        }, function (d, status) {
-            if ('success' == status) {
-                var json = JSON.parse(d);
-                var pageCount = json.pageCount;
-                var currPage = json.currPage;
-                var allCount = json.allCount;
-                var title = json.title;
-                var eventsList = json.eventsList;
-                //获取tbody节点
-                //清空节点原内容
-                var innerHTML = "";
-                //循环的塞入新的内容
-                for (var i = 0; i < eventsList.length; i++) {
-                    var id = i + 1 + 20 * (currPage - 1);
-                    if (eventsList[i].status == 0) {
-                        innerHTML += "<tr>" +
-                            "<td>" + id + "</td>" +
-                            "<td><a href=\"/admin/eventsedit?id=" + eventsList[i].id + "\">" + eventsList[i].title + "</a></td>" +
-                            "<td>" + eventsList[i].date + "</td>" +
-                            "<td>" + eventsList[i].time + "</td>" +
-                            "<td>" + eventsList[i].address + "</td>" +
-                            "<td>" + eventsList[i].reader + "</td>" +
-                            "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + eventsList[i].id + ')" value="0">已停用</button>' + "</td>" +
-                            "<td>" +
-                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + eventsList[i].id + ')">删除 </button>' +
-                            '<a href="/admin/preview?id=' + eventsList[i].id + '&type=events" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                            "</td>" +
-                            "</tr>";
-                    } else {
-                        innerHTML += "<tr>" +
-                            "<td>" + id + "</td>" +
-                            "<td>" +
-                            "<a href=\"/admin/eventsedit?id=" + eventsList[i].id + "\">" + eventsList[i].title + "</a>" +
-                            "</td>" +
-                            "<td>" + eventsList[i].date + "</td>" +
-                            "<td>" + eventsList[i].time + "</td>" +
-                            "<td>" + eventsList[i].address + "</td>" +
-                            "<td>" + eventsList[i].reader + "</td>" +
-                            "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + eventsList[i].id + ')" value="1">已启用</button>' + "</td>" +
-                            "<td>" +
-                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + eventsList[i].id + ')">删除' +
-                            '</button> ' +
-                            '<a href="/admin/preview?id=' + eventsList[i].id + '&type=events" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                            "</td>" +
-                            "</tr>";
-                    }
-                }
-                $("#tbody").html(innerHTML);
-                //重新符之搜索title
-                document.getElementById("title").value = title;
-                var record = document.getElementById("record");
-                var paging = document.getElementById("paging");
-                paging.innerHTML = "";
-                record.innerHTML = "共" + allCount + "条记录，当前第" + currPage + "/" + pageCount + "页，每页20条记录";
-                if (pageCount >= 7) {
-                    for (i = currPage - 4; i < currPage + 3 && i < pageCount; i++) {
-                        if (i < 0) {
-                            continue;
-                        }
-                        id = i + 1;
-                        if (id == currPage) {
-                            paging.innerHTML += "<li page-index=" + id + " class=\"active\" onclick=\"check(" + id + ")\"><a>" + id + "</a></li>";
+        $.ajax({
+            type: 'GET',
+            url: '/apis/events/?title='+title,
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let events = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < events.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        if (events[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td><a href=\"eventsedit.html?id=" + events[i].eid + "\">" + events[i].title + "</a></td>" +
+                                "<td>" + events[i].date + "</td>" +
+                                "<td>" + events[i].time + "</td>" +
+                                "<td>" + events[i].address + "</td>" +
+                                "<td>" + events[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button>' +
+                                '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
                         } else {
-                            paging.innerHTML += "<li page-index=" + id + " onclick=\"check(" + id + ")\"><a>" + id + "</a></li>";
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td>" +
+                                "<a href=\"eventsedit.html" + events[i].eid + "\">" + events[i].title + "</a>" +
+                                "</td>" +
+                                "<td>" + events[i].date + "</td>" +
+                                "<td>" + events[i].time + "</td>" +
+                                "<td>" + events[i].address + "</td>" +
+                                "<td>" + events[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除' +
+                                '</button> ' +
+                                '<a href= "eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                    //重新符之搜索title
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
                         }
                     }
                 } else {
-                    for (i = 0; i < pageCount; i++) {
-                        id = i + 1;
-                        if (id == currPage) {
-                            paging.innerHTML += "<li page-index=" + id + " class=\"active\" onclick=\"check(" + id + ")\"><a>" + id + "</a></li>";
-                        } else {
-                            paging.innerHTML += "<li page-index=" + id + " onclick=\"check(" + id + ")\"><a>" + id + "</a></li>";
-                        }
-                    }
-                }
-            }
-        });
-    }
-    function change_status(id) {
-        //自行修改访问的Servlet名和传递参数(get方式),也可使用post方式
-        //获取ajax对象
-        //sta 当前操作对象状态
-        var but = event.target;
-        $.post('/admin/status', {
-            id: id,
-            type: 'events'
-        }, function (data, sta) {
-            if ('success' == sta) {
-                var json = JSON.parse(data);
-                var status = json.status;
-                if (status == true) {
-                    if (but.value == 0) {
-                        but.value = 1;
-                        but.innerHTML = "已启用";
-                        but.className = "btn btn-info btn-sm";
-                    } else {
-                        but.value = 0;
-                        but.innerHTML = "已停用";
-                        but.className = "btn btn-warning btn-sm";
-                    }
-                } else {
-                    alert("修改失败！");
+                    alert("error!")
                 }
             }
 
         });
     }
+
+    function change_status(id) {
+        var but = event.target;
+        $.ajax({
+            type: 'POST',
+            url: '/apis/events/status/',
+            data: {'eid': id},
+            success: function (data, result) {
+                if ('success' == result) {
+                    // 正常返回
+                    let json = JSON.parse(data);
+                    let resp_status = json.status;
+                    if (resp_status) {
+                        let blog_status = json.data.status;
+                        if (blog_status == 1) {
+                            but.value = 1;
+                            but.innerHTML = "已启用";
+                            but.className = "btn btn-info btn-sm";
+                        } else {
+                            but.value = 0;
+                            but.innerHTML = "已停用";
+                            but.className = "btn btn-warning btn-sm";
+                        }
+                    } else {
+                        alert("修改失败！");
+                    }
+                }
+            }
+        });
+    }
+
+    function page_turning(page) {
+        let title = document.getElementById("title").value;
+        $.ajax({
+            type: 'GET',
+            url: '/apis/events/?title='+ title +'&page=' + page,
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let events = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < events.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        if (events[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td><a href=\"eventsedit.html?id=" + events[i].eid + "\">" + events[i].title + "</a></td>" +
+                                "<td>" + events[i].date + "</td>" +
+                                "<td>" + events[i].time + "</td>" +
+                                "<td>" + events[i].address + "</td>" +
+                                "<td>" + events[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button>' +
+                                '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
+                        } else {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td>" +
+                                "<a href=\"eventsedit.html?id=" + events[i].eid + "\">" + events[i].title + "</a>" +
+                                "</td>" +
+                                "<td>" + events[i].date + "</td>" +
+                                "<td>" + events[i].time + "</td>" +
+                                "<td>" + events[i].address + "</td>" +
+                                "<td>" + events[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除' +
+                                '</button> ' +
+                                '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                    //重新符之搜索title
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        });
+    }
+
+    function load_event_data() {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/events/',
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let events = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < events.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        if (events[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td><a href=\"eventsedit.html?id=" + events[i].eid + "\">" + events[i].title + "</a></td>" +
+                                "<td>" + events[i].date + "</td>" +
+                                "<td>" + events[i].time + "</td>" +
+                                "<td>" + events[i].address + "</td>" +
+                                "<td>" + events[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button>' +
+                                '<a href="eventsview.html?id=' + events[i].eid + ' "target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
+                        } else {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td>" +
+                                "<a href=\"eventsedit.html?id=" + events[i].eid + "\">" + events[i].title + "</a>" +
+                                "</td>" +
+                                "<td>" + events[i].date + "</td>" +
+                                "<td>" + events[i].time + "</td>" +
+                                "<td>" + events[i].address + "</td>" +
+                                "<td>" + events[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除' +
+                                '</button> ' +
+                                '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                    //重新符之搜索title
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        })
+    }
+    $(document).ready(function () {
+        load_event_data()
+    })
 </script>
 
 <script type="text/javascript">
@@ -269,15 +451,20 @@
             content: '<h4>确定删除？</h4>',
             okValue: '确定',
             ok: function () {
-
-                $.post('/admin/delete', {
-                    id: id,
-                    type: 'events'
-                }, function (data, sta) {
-                    if ('success' == sta) {
-                        window.location.reload();
-                    } else {
-                        alert("删除失败！");
+                $.ajax({
+                    type: 'POST',
+                    url: '/apis/events/delete/',
+                    data: {'eid': id},
+                    success: function (data, result) {
+                        if('success' == result){
+                            let json = JSON.parse(data);
+                            let resp_status = json.status;
+                            if(resp_status){
+                                load_event_data();
+                            }else{
+                                alert("删除失败:" + json.message);
+                            }
+                        }
                     }
                 });
             },

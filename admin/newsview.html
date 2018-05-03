@@ -46,7 +46,7 @@
 <div class="container mtb">
     <div class="row">
         <!-- BLOG POSTS LIST -->
-        <div class="col-lg-10 col-lg-offset-1" id="events_list">
+        <div class="col-lg-10 col-lg-offset-1" id="news_list">
             <!-- Blog Post -->
         </div>
     </div>
@@ -178,7 +178,7 @@
     function load_event_info(id) {
         $.ajax({
             type: 'GET',
-            url: '/apis/events/?id=' + id,
+            url: '/apis/news/?id=' + id,
             data: {},
             success: function (data, result) {
                 if ("success" == result){
@@ -216,8 +216,8 @@
                         "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
                         "</div>" +
                         "</div>";
-                    $('#events_list').empty();
-                    $('#events_list').append(innerHTML);
+                    $('#news_list').empty();
+                    $('#news_list').append(innerHTML);
                 } else {
                     alert("error!")
                 }

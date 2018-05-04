@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="../images/xiyoulinux.png">
+    <title>西邮Linux兴趣小组官网-后台管理</title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="css/sb-bk-theme.css" rel="stylesheet">
+    <link href="css/bk.css" rel="stylesheet">
+    <link href="css/ui-dialog.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/dialog-min.js"></script>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="header">
+        <script>
+            $(function () {
+                $("#header").load("header.html");
+            })
+        </script>
+    </nav>
+
+    <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row page-header-box">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        活动管理
+                    </h1>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    活动列表
+                </div>
+
+                <div>
+                    <div class="king-wrapper">
+                        <form class="form-inline king-search-form king-no-bg mt15 mb15 pull-left"
+                              style="margin-left: 2%">
+                            <div class="form-group">
+                                <label>名称：</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="请输入标题" name="name"
+                                           id="name"
+                                           value="">
+                                </div>
+                            </div>
+                            <button type="button" class="king-btn king-info" onclick="search_by_name()">搜索</button>
+                        </form>
+                        <input type="button" class="king-btn king-info pull-right mt15 ml15"
+                        style="margin-right: 2%;" value="新增开发组" name="add" id="add_devgroup">
+                    </div>
+
+                    <table class="table table-out-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width:50px;" class="tc">序号</th>
+                            <th>名称</th>
+                            <th>简述</th>
+                            <th>开发者数</th>
+                            <th>开发者</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        <tr>
+                            <td>1</td>
+                            <td>
+                                <a href="devgroupedit.html?id=1">AAAAAAAAAAA</a>
+                            </td>
+                            <td>这是简述</td>
+                            <td>1</td>
+                            <td>XiaoMing</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                        onclick="remind(1)">删除
+                                </button>
+                            </td>
+                        <tr>
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="12">
+                                <div class="pagination-info pull-left" id="record">
+                                    共1条记录，当前第1/1页，每页20条记录
+                                </div>
+                                <div class="pull-right king-page-box">
+                                    <ul class="pagination pagination-small pull-right" id="paging">
+                                        <li page-index="1" class="active" onclick="check(1)"><a>1</a></li>
+                                        <li page-index="2" class="active" onclick="check(1)"><a>2</a></li>
+                                        <li page-index="3" class="active" onclick="check(1)"><a>3</a></li>
+                                        <li page-index="4" class="active" onclick="check(1)"><a>4</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+</div>
+
+
+
+<script type="text/javascript">
+    //模态对话框
+    $("#add_devgroup").click(function() {
+        let html = "<div class=\"input-group\">" +
+            "<span class=\"input-group-addon\">名称：</span>" +
+            "<input type=\"text\" class=\"form-control\" name=\"name\" id=\"devgroup_name\" placeholder=\"在此输入名称\"" +
+            "value=\"\">" +
+            "</div>" +
+            "<br/>" +
+            "<div class=\"input-group\">" +
+            "<span class=\"input-group-addon\">简述：</span>" +
+            "<textarea class=\"form-control\" style=\"height:80px;\" id=\"devgroup_desc\"></textarea>" +
+            "</div>";
+        ;
+        let d = dialog({
+            width: 260,
+            title: '添加开发者',
+            content: html,
+            okValue: '确定',
+            ok: function() {
+
+                let name = $('#devgroup_name').val();
+                let desc = $('#devgroup_desc').val();
+
+                if (name == ''){
+                    alert("名称不能为空!")
+                }else if(desc == ''){
+                    alert("简述不能为空!")
+                }else {
+                    let data = {
+                        'name': name,
+                        'desc': desc,
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/apis/devgroup/add/',
+                        data: data,
+                        success: function (data, result) {
+                            if ("success" == result) {
+                                let json = JSON.parse(data);
+                                if (json.status) {
+                                    alert("添加成功！");
+                                    load_devgroup_data();
+                                } else {
+                                    alert("Error: " + json.message)
+                                }
+                            } else {
+                                alert("error:")
+                            }
+                        }
+                    });
+                }
+            },
+            cancelValue: '取消',
+            cancel: function() {
+                // do something
+            }
+        });
+        d.showModal();
+    });
+</script>
+
+<script>
+    function get_devusers_by_gid(gid) {
+        var  devusers;
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devuser/?gid='+gid+'&page_size=100',
+            async: false,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    var json = JSON.parse(data);
+                    devusers = json.data;
+                } else {
+                    alert("error!");
+                    devusers = null;
+                }
+            }
+        });
+        return devusers;
+    }
+
+    function get_devusers_number(devusers) {
+        if(devusers == null){
+            return 0;
+        }else{
+            return devusers.length
+        }
+    }
+
+    function get_devusers_name(devusers) {
+        if(devusers == null || devusers.length == 0){
+            return "null";
+        }else{
+            let name = "";
+            for(let i=0; i< devusers.length ; i++){
+                name += devusers[i].nickname +',';
+            }
+            return name
+        }
+    }
+
+    function search_by_name() {
+        let name = document.getElementById("name").value;
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devgroup/?name='+ name ,
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let devgroup = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < devgroup.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        let devuser = get_devusers_by_gid(devgroup[i].gid);
+                        tbody.innerHTML += "<tr>" +
+                            "<td>" + id + "</td>" +
+                            "<td><a href=\"devgroupedit.html?id=" + devgroup[i].gid + "\">" + devgroup[i].name + "</a></td>" +
+                            "<td>" + devgroup[i].desc + "</td>" +
+                            "<td>" + get_devusers_number(devuser) + "</td>" +
+                            "<td>" + get_devusers_name(devuser) + "</td>" +
+                            "<td>" +
+                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + devgroup[i].gid + ')">删除 </button>' +
+                            "</td>" +
+                            "</tr>";
+                    }
+                    //重新符之搜索name
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        });
+    }
+
+    function page_turning(page) {
+        let name = document.getElementById("name").value;
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devgroup/?name='+ name +'&page=' + page,
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let devgroup = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < devgroup.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        let devuser = get_devusers_by_gid(devgroup[i].gid);
+                        tbody.innerHTML += "<tr>" +
+                            "<td>" + id + "</td>" +
+                            "<td><a href=\"devgroupedit.html?id=" + devgroup[i].gid + "\">" + devgroup[i].name + "</a></td>" +
+                            "<td>" + devgroup[i].desc + "</td>" +
+                            "<td>" + get_devusers_number(devuser) + "</td>" +
+                            "<td>" + get_devusers_name(devuser) + "</td>" +
+                            "<td>" +
+                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + devgroup[i].gid + ')">删除 </button>' +
+                            "</td>" +
+                            "</tr>";
+                    }
+                    //重新符之搜索name
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        });
+    }
+
+    function load_devgroup_data() {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devgroup/',
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let devgroup = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < devgroup.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        let devuser = get_devusers_by_gid(devgroup[i].gid);
+                        tbody.innerHTML += "<tr>" +
+                            "<td>" + id + "</td>" +
+                            "<td><a href=\"devgroupedit.html?id=" + devgroup[i].gid + "\">" + devgroup[i].name + "</a></td>" +
+                            "<td>" + devgroup[i].desc + "</td>" +
+                            "<td>" + get_devusers_number(devuser) + "</td>" +
+                            "<td>" + get_devusers_name(devuser) + "</td>" +
+                            "<td>" +
+                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + devgroup[i].gid + ')">删除 </button>' +
+                            "</td>" +
+                            "</tr>";
+                    }
+                    //重新符之搜索name
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        })
+    }
+    $(document).ready(function () {
+        load_devgroup_data();
+    })
+</script>
+
+<script type="text/javascript">
+
+    function remind(id) {
+        var d = dialog({
+            width: 260,
+            title: '消息提醒',
+            content: '<h4>确定删除？</h4>',
+            okValue: '确定',
+            ok: function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/apis/devgroup/delete/',
+                    data: {'gid': id},
+                    success: function (data, result) {
+                        if('success' == result){
+                            let json = JSON.parse(data);
+                            let resp_status = json.status;
+                            if(resp_status){
+                                alert("删除成功!");
+                                load_devgroup_data();
+                            }else{
+                                alert("删除失败:" + json.message);
+                            }
+                        }
+                    }
+                });
+            },
+            cancelValue: '取消',
+            cancel: function () {
+            }
+        });
+        d.showModal();
+    }
+</script>
+
+</body>
+
+</html>
+

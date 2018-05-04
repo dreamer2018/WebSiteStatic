@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/editormd.css"/>
+    <link rel="shortcut icon" href="../images/xiyoulinux.png">
+    <title>活动管理</title>
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="css/sb-bk-theme.css" rel="stylesheet">
+    <link href="css/bk.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+    <link href="css/ui-dialog.css" rel="stylesheet">
+
+
+
+</head>
+<body>
+
+
+<div id="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="header">
+        <script>
+            $(function () {
+                $("#header").load("header.html");
+            })
+        </script>
+    </nav>
+
+
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <!-- Page Heading -->
+            <div class="row page-header-box">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        开发组管理
+                    </h1>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    编辑组信息
+                </div>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <div class="container">
+                    <form name="myform">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">名称：</span>
+                                    <input type="text" class="form-control" name="name" id="name" placeholder="在此输入标题"
+                                           value="">
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <span style="margin: 0 auto;color: red;font-size: 20px;" id="message"></span>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="input-group">
+                                    <span class="input-group-addon">简述：</span>
+                                    <input type="text" class="form-control" name="desc" id="desc"
+                                           placeholder="输入简述内容"
+                                           value="">
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <div class="panel panel-default" style="padding: 2px">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <span>编辑开发者</span>
+                                    <span class="pull-right">
+                                        <input type="button" class="btn btn-info" value="新增" name="add" id="add_devuser"
+                                           onclick="sunmit_data()">
+                                    </span>
+                                </div>
+                            </div>
+                            <br/>
+
+                            <ul class="nav nav-list">
+                                <li class="divider"></li>
+                            </ul>
+                            <br/>
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th style="width:50px;" class="tc">序号</th>
+                                    <th>名称</th>
+                                    <th>邮箱</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="tbody">
+
+                                </tbody>
+                            </table>
+                            <br/>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <input type="button" class="btn btn-success" value="提交" onclick="submit_data()">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <br/>
+
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+</div>
+
+
+<!--editor-md 依赖 -->
+<script src="js/jquery.min.js"></script>
+<!--bootstrap依赖-->
+
+<script src="js/bootstrap.min.js"></script>
+<script src="js/dialog-min.js"></script>
+
+<script type="text/javascript">
+    //模态对话框
+    $("#add_devuser").click(function() {
+        let html = "<div class=\"input-group\">" +
+                "<span class=\"input-group-addon\">名称：</span>" +
+                "<input type=\"text\" class=\"form-control\" name=\"name\" id=\"nickname\" placeholder=\"在此输入名称\"" +
+            "value=\"\">" +
+                "</div>" +
+            "<br/>" +
+            "<div class=\"input-group\">" +
+            "<span class=\"input-group-addon\">邮箱：</span>" +
+            "<input type=\"text\" class=\"form-control\" name=\"email\" id=\"user_email\" placeholder=\"在此输入邮箱\"" +
+            " value=\"\">" +
+            "</div>";
+        ;
+        let d = dialog({
+            width: 260,
+            title: '添加开发者',
+            content: html,
+            okValue: '确定',
+            ok: function() {
+                let nickname = $('#nickname').val();
+                let email =  $('#user_email').val();
+
+                if (nickname == ''){
+                    alert("名称不能为空!")
+                }else if(email == ''){
+                    alert("简述不能为空!")
+                }else{
+                    let data = {
+                        'gid': analyze_parameter('id'),
+                        'nickname': nickname,
+                        'email': email,
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '/apis/devuser/add/',
+                        data: data,
+                        success: function (data, result) {
+                            if ("success" == result) {
+                                let json = JSON.parse(data);
+                                if(json.status){
+                                    alert("添加成功！");
+                                    load_devuser_info(analyze_parameter('id'))
+                                }else{
+                                    alert("Error: "+ json.message)
+                                }
+                            } else {
+                                alert("error:")
+                            }
+                        }
+                    });
+                }
+            },
+            cancelValue: '取消',
+            cancel: function() {
+                // do something
+            }
+        });
+        d.showModal();
+    });
+</script>
+
+
+<script>
+    function analyze_parameter(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
+        }
+    }
+    function load_devgroup_info(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devgroup/?id=' + id,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result) {
+                    let json = JSON.parse(data);
+                    let devgroup = json.data;
+                    let name = devgroup.name;
+                    let desc = devgroup.desc;
+                    $('#name').val(name);
+                    $('#desc').val(desc);
+                } else {
+                    alert("error!")
+                }
+            }
+        });
+
+    }
+    function load_devuser_info(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devuser/?gid=' + id,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result) {
+                    let json = JSON.parse(data);
+                    let devusers = json.data;
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < devusers.length; i++) {
+                        let id = i+1;
+                        tbody.innerHTML += "<tr>" +
+                            "<td>"+ id +"</td>" +
+                            "<td>"+ devusers[i].nickname +"</td>" +
+                            "<td>"+ devusers[i].email +"</td>" +
+                            "<td>" +
+                            "<button type=\"button\" class=\"btn btn-danger btn-sm\"" +
+                            "onclick=\"delete_devuser("+ devusers[i].uid +")\">删除" +
+                            "</button>" +
+                            "</td>" +
+                            "<tr>"
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        let id = analyze_parameter('id');
+        if (id != null) {
+            load_devgroup_info(id);
+            load_devuser_info(id);
+
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    function submit_data() {
+        let name = $('#name').val();
+        let desc = $('#desc').val();
+        $('#message').text("");
+        if (name == ''){
+            $('#message').text("名称不能为空!");
+        }else if(desc == ''){
+            $('#message').text("简述不能为空!");
+        }else {
+            let data = {
+                'gid': analyze_parameter('id'),
+                'name': name,
+                'desc': desc,
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/apis/devgroup/alter/',
+                data: data,
+                success: function (data, result) {
+                    if ("success" == result) {
+                        let json = JSON.parse(data);
+                        if (json.status) {
+                            alert("添加成功！");
+                            window.location.href = "devgroup.html"
+                        } else {
+                            alert("Error: " + json.message)
+                        }
+                    } else {
+                        alert("error:")
+                    }
+                }
+            });
+        }
+    }
+
+    function delete_devuser(id) {
+        var d = dialog({
+            width: 260,
+            title: '消息提醒',
+            content: '<h4>确定删除？</h4>',
+            okValue: '确定',
+            ok: function () {
+                $.ajax({
+                    type: 'POST',
+                    url: '/apis/devuser/delete/',
+                    data: {'uid': id},
+                    success: function (data, result) {
+                        if('success' == result){
+                            let json = JSON.parse(data);
+                            let resp_status = json.status;
+                            if(resp_status){
+                                alert("删除成功！");
+                                load_devuser_info(analyze_parameter('id'));
+                            }else{
+                                alert("删除失败:" + json.message);
+                            }
+                        }
+                    }
+                });
+            },
+            cancelValue: '取消',
+            cancel: function () {
+            }
+        });
+        d.showModal();
+    }
+</script>
+
+</body>
+</html>

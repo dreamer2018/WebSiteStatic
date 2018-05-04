@@ -45,11 +45,8 @@
         <li id="picture_page">
             <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>照片管理</a>
         </li>
-        <li id="devuser_page">
-            <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>开发者管理</a>
-        </li>
         <li id="devgroup_page">
-        <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>开发组管理</a>
+        <a href="devgroup.html"><i class="fa fa-fw fa-desktop"></i>开发组管理</a>
         </li>
     </li>
     </ul>
@@ -70,6 +67,8 @@
             $("#project_page").attr("class", "active");
         }else if(url.search("pictures.html") >= 0){
             $("#picture_page").attr("class", "active");
+        }else if(url.search("devgroup.html") >= 0){
+            $("#devgroup_page").attr("class", "active");
         }
     })
 </script>

@@ -32,17 +32,17 @@
         <div class="container-fluid">
 
             <!-- Page Heading -->
-            <div class="row page-header-box" >
+            <div class="row page-header-box">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        新闻管理
+                        项目管理
                     </h1>
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    编辑文章
+                    编辑项目
                 </div>
 
                 <br/>
@@ -51,64 +51,78 @@
 
                 <div class="container">
                     <form name="myform">
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">标题：</span>
-                                        <input type="text" class="form-control" name="title" id = "title" placeholder="在此输入标题"
-                                               value="">
-                                    </div>
-                                </div>
-                                <div class="col-xs-3">
-                    <span style="margin: 0 auto;color: red;font-size: 20px;" id="message"></span>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">标题：</span>
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="在此输入标题"
+                                           value="">
                                 </div>
                             </div>
-                            <br/>
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <div class="input-group ">
-                                        <span class="input-group-addon">日期：</span>
-                                        <input type="text" class="form-control" name="date" id="pickdate"
-                                               placeholder="在此输入日期"
-                                               value="">
-                                    </div>
-                                </div>
-                                <div class="col-xs-3">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">时间：</span>
-                                        <input type="text" class="form-control" name="time" id="picktime"
-                                               placeholder="在此输入时间"
-                                               value="">
-                                    </div>
-                                </div>
-                                <div class="col-xs-3">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">标签：</span>
-                                        <input type="text" class="form-control" name="label" id="label" placeholder="多个标签逗号隔开"
-                                               value="">
-                                    </div>
+                            <div class="col-xs-3">
+                                <span style="margin: 0 auto;color: red;font-size: 20px;" id="message"></span>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group ">
+                                    <span class="input-group-addon">日期：</span>
+                                    <input type="text" class="form-control" name="date" id="pickdate"
+                                           placeholder="在此输入日期"
+                                           value="">
                                 </div>
                             </div>
-                            <br/>
-                            <input type="hidden" id="poster">
-                            <div id="load_poster">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">时间：</span>
+                                    <input type="text" class="form-control" name="time" id="picktime"
+                                           placeholder="在此输入时间"
+                                           value="">
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">开发组</span>
+                                    <select class="form-control" id="devgroup_select">
+                                        <option>深圳</option>
+                                        <option>广州</option>
+                                        <option>北京</option>
+                                        <option>上海</option>
+                                    </select>
+                                </div>
 
                             </div>
-                            <br/>
-                            <div id="test-editormd">
-                                <textarea style="display:none;width: 97%" id="text"></textarea>
-                            </div>
-                            <br/>
-                            <div class="row">
-                                <div class="col-xs-3">
-                                    <div class="input-group">
-                                        <input type="button" class="btn btn-success" value="提交" name="submit"
-                                               onclick="sunmit_data()">
-                                    </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">项目链接：</span>
+                                    <input type="text" class="form-control" name="link" id="link" placeholder="多个标签逗号隔开"
+                                           value="">
                                 </div>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                        <br/>
+                        <input type="hidden" id="poster">
+                        <div id="load_poster">
+                        </div>
+                        <br/>
+                        <div id="test-editormd">
+                            <textarea style="display:none;width: 97%" id="text"></textarea>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <input type="button" class="btn btn-success" value="提交" name="submit"
+                                           onclick="sunmit_data()">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <br/>
             </div>
         </div>
@@ -130,7 +144,6 @@
 <script type="text/javascript" charset="utf-8" src="../js/datepicker/datedropper.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="../js/datepicker/timedropper.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="../js/datepicker/datepicker.js"></script>
-
 
 <script type="text/javascript">
     let Editor;
@@ -179,6 +192,39 @@
 </script>
 
 <script>
+    function devgroup_selector(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devgroup/?page_size=10000',
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result) {
+                    let json = JSON.parse(data);
+                    let devgroup = json.data;
+                    let html = "";
+                    if (json.status) {
+                        //循环的塞入新的内容
+                        for (let i = 0; i < devgroup.length; i++) {
+                            if (devgroup[i].gid == id) {
+                                html += "\"<option value=\"" + devgroup[i].gid + "\" selected = \"selected\">" + devgroup[i].name + "</option>\"";
+                            } else {
+                                html += "\"<option value=\"" + devgroup[i].gid + "\">" + devgroup[i].name + "</option>\"";
+                            }
+                        }
+                        $('#devgroup_select').empty();
+                        $('#devgroup_select').append(html);
+                    } else {
+                        alert("Error:" + devgroup.message)
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        })
+    }
+
     function analyze_parameter(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
         var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
@@ -189,28 +235,33 @@
         }
     }
 
-    function load_event_info(id) {
+    function load_projects_info(id) {
         $.ajax({
             type: 'GET',
-            url: '/apis/news/?id=' + id,
+            url: '/apis/projects/?id=' + id,
             data: {},
             success: function (data, result) {
-                if ("success" == result){
+                if ("success" == result) {
                     let json = JSON.parse(data);
-                    let event = json.data;
-                    let title = event.title;
-                    let date = event.date;
-                    let time = event.time;
-                    let label = event.labels;
-                    let poster = event.poster;
-                    let makrkdown = event.origin;
-                    let content = event.content;
-                    $('#title').val(title);
-                    $('#pickdate').val(date);
-                    $('#picktime').val(time);
-                    $('#label').val(label);
-                    load_poster(poster);
-                    addContent(makrkdown);
+                    let project = json.data;
+                    if (json.status) {
+                        let title = project.title;
+                        let date = project.date;
+                        let time = project.time;
+                        let link = project.link;
+                        let poster = project.poster;
+                        let makrkdown = project.origin;
+                        let author = project.author;
+                        $('#title').val(title);
+                        $('#pickdate').val(date);
+                        $('#picktime').val(time);
+                        $('#link').val(link);
+                        devgroup_selector(author);
+                        load_poster(poster);
+                        addContent(makrkdown);
+                    } else {
+                        alert("Error:" + json.message)
+                    }
                 } else {
                     alert("error!")
                 }
@@ -218,12 +269,12 @@
         });
     }
 
-    function load_poster(url){
+    function load_poster(url) {
         let html;
-        if(url == null){
+        if (url == null) {
             html = "<div class='row'>" +
                 "<div class=\"col-xs-2\">" +
-                "<span>活动海报(小于5M):</span>" +
+                "<span>项目图标(小于5M):</span>" +
                 "</div>" +
                 "<div class=\"col-xs-3\">" +
                 "<input type=\"file\" id=\"inputfile\" name=\"poster\" onchange=\"isPic(0)\">" +
@@ -232,19 +283,19 @@
                 "<input type=\"button\" name=\"poster\" value=\"上传\" onchange=\"isPic(0)\" onclick='FileUpload()' >" +
                 "</div>" +
                 "</div>";
-        }else{
+        } else {
             $('#poster').val(url);
             html = "<div class='row' >" +
                 "<div id=\"origin_poster\"  class=\"col-xs-2\"> " +
-                "<span>已上传的活动海报:</span> " +
-                "<img src=\""+ resolve_poster(url) +"\" style=\"height: 200px\">" +
+                "<span>已上传的项目图标:</span> " +
+                "<img src=\"" + resolve_poster(url) + "\" style=\"height: 200px\">" +
                 "</div>" +
                 "</div>" +
                 "<div class='row'>" +
                 "<br/>" +
                 "<br/>" +
-                "<div class=\"col-xs-2\">"+
-                "<span>更改活动海报(小于5M):" +
+                "<div class=\"col-xs-2\">" +
+                "<span>更改项目图标(小于5M):" +
                 "</div>" +
                 "<div class=\"col-xs-3\">" +
                 "<input type=\"file\" id=\"inputfile\" name=\"poster\" onchange=\"isPic(1)\">" +
@@ -259,9 +310,9 @@
     }
 
     function resolve_poster(url) {
-        if(url.search('http') >= 0 || url.search('https') >= 0){
+        if (url.search('http') >= 0 || url.search('https') >= 0) {
             return url;
-        }else{
+        } else {
             return '/apis/' + url
         }
     }
@@ -270,24 +321,24 @@
         let form_data = new FormData();
         let file_info = $('#inputfile')[0].files[0];
         form_data.append('file', file_info);
-        if(file_info == undefined){ //暂且不许要判断是否有附件
+        if (file_info == undefined) { //暂且不许要判断是否有附件
             alert('你没有选择任何文件');
             return false;
         }
 
         // 提交ajax的请求
         $.ajax({
-            url:"/apis/upload/",
-            type:'POST',
+            url: "/apis/upload/",
+            type: 'POST',
             data: form_data,
             processData: false,  // tell jquery not to process the data
             contentType: false, // tell jquery not to set contentType
-            success: function(data) {
+            success: function (data) {
                 let json = JSON.parse(data);
-                if(json.status){
+                if (json.status) {
                     $('#upload_picture').remove();
                     let html = "<div class=\"col-xs-3\" id=\"upload_picture\"> " +
-                        "<img src=\"/apis/"+ json.data.url +"\" style=\"height: 200px\">" +
+                        "<img src=\"/apis/" + json.data.url + "\" style=\"height: 200px\">" +
                         "</div>";
                     $('#poster').val(json.data.url);
                     $('#load_poster').append(html);
@@ -301,11 +352,11 @@
 
     $(document).ready(function () {
         let id = analyze_parameter('id');
-        if(id != null){
-            load_event_info(id);
-
-        }else{
+        if (id != null) {
+            load_projects_info(id);
+        } else {
             load_poster(null);
+            devgroup_selector(18)
         }
     });
 </script>
@@ -315,35 +366,40 @@
         let title = $('#title').val();
         let date = $('#pickdate').val();
         let time = $('#picktime').val();
-        let label = $('#label').val();
+        let author = $('#devgroup_select').val();
+        let link = $('#link').val();
         let poster = $('#poster').val();
         let makrkdown = getMarkDown();
         let content = getHtml();
         $('#message').text("");
-        if(title == ''){
+        if (title == '') {
             $('#message').text("标题不能为空！");
-        }else if(label == ''){
-            $('#message').text("标签不能为空！");
-        }else if(poster == ''){
+        } else if (poster == '') {
             $('#message').text("海报不能为空！");
-        }else if(makrkdown == '' || content == '') {
+        } else if (makrkdown == '' || content == '') {
             $('#message').text("内容不能为空！");
-        }else{
-            let id= analyze_parameter('id');
+        } else if (author == '') {
+            $('#message').text("必须选择开发组");
+        } else if (link == '') {
+            $('#message').text("项目链接不能为空");
+        } else {
+
+            let id = analyze_parameter('id');
             let data;
             let url;
             if (id != null){
                 data = {
-                    'nid': id,
+                    'pid': id,
                     'title': title,
                     'content': content,
                     'origin': makrkdown,
                     'poster': poster,
                     'date': date,
                     'time': time,
-                    'labels': label,
+                    'link': link,
+                    'author': author,
                 };
-                url = '/apis/news/alter/';
+                url = "/apis/projects/alter/";
             }else{
                 data = {
                     'title': title,
@@ -352,24 +408,25 @@
                     'poster': poster,
                     'date': date,
                     'time': time,
-                    'labels': label,
+                    'link': link,
+                    'author': author,
                 };
-                url = '/apis/news/add/';
+                url = "/apis/projects/add/";
             }
             $.ajax({
-                type: 'POST',
                 url: url,
+                type: 'POST',
                 data: data,
                 success: function (rtu, result) {
-                    if('success' == result){
+                    if ('success' == result) {
                         let json = JSON.parse(rtu);
-                        if(json.status){
+                        if (json.status) {
                             alert('提交成功！');
-                            window.location.href = 'news.html'
-                        }else{
+                            window.location.href = 'projects.html'
+                        } else {
                             alert(json.message)
                         }
-                    }else{
+                    } else {
                         alert("error!");
                     }
                 }
@@ -378,13 +435,12 @@
     }
 
 
-
     function isPic(status) {
         let file_types = ["jpg", "png", "gif", "bmp", "JPG", "PNG", "GIF", "BMP"];
         let file_obj = $('#inputfile')[0].files[0];
         let file_path = file_obj.name;
         let file_size = file_obj.size;
-        let file_maxsize = 1024*1024*10;     //10M
+        let file_maxsize = 1024 * 1024 * 10;     //10M
         if (file_path) {
             var isnext = false;
             var fileend = file_path;
@@ -426,7 +482,7 @@
             $('#inputfile').val("");
             return false;
         } else {
-            $("#origin_poster").hide();
+            $("#origin_poster").empty();
             return true;
         }
     }

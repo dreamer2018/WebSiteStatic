@@ -243,8 +243,8 @@
                     let json = JSON.parse(data);
                     let resp_status = json.status;
                     if (resp_status) {
-                        let blog_status = json.data.status;
-                        if (blog_status == 1) {
+                        let events_status = json.data.status;
+                        if (events_status == 1) {
                             but.value = 1;
                             but.innerHTML = "已启用";
                             but.className = "btn btn-info btn-sm";

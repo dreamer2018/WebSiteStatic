@@ -39,7 +39,7 @@
             <div class="row page-header-box">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        活动管理
+                        照片管理
                     </h1>
                 </div>
             </div>
@@ -47,26 +47,14 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    活动列表
+                    照片列表
                 </div>
 
                 <div>
                     <div class="king-wrapper">
-                        <form class="form-inline king-search-form king-no-bg mt15 mb15 pull-left"
-                              style="margin-left: 2%">
-                            <div class="form-group">
-                                <label>标题：</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="请输入标题" name="title"
-                                           id="title"
-                                           value="">
-                                </div>
-                            </div>
-                            <button type="button" class="king-btn king-info" onclick="search_by_title()">搜索</button>
-                        </form>
-                        <a href="newsedit.html" class="king-btn king-info pull-right mt15 ml15"
-                           style="margin-right: 2%;">
-                            <i class="fa fa-user-plus mr5"></i>新增文章
+                        <a href="picturesedit.html" class="king-btn king-info pull-right mt15 ml15"
+                           style="margin-right: 2%;margin-bottom: 10px">
+                            <i class="fa fa-user-plus mr5"></i>上传照片
                         </a>
                     </div>
 
@@ -74,10 +62,9 @@
                         <thead>
                         <tr>
                             <th style="width:50px;" class="tc">序号</th>
-                            <th>标题</th>
+                            <th>简述</th>
                             <th>日期</th>
                             <th>时间</th>
-                            <th>阅读量</th>
                             <th>状态</th>
                             <th>操作</th>
                         </tr>
@@ -85,12 +72,9 @@
                         <tbody id="tbody">
                         <tr>
                             <td>1</td>
-                            <td>
-                                <a href="newsedit.html?id=1">AAAAAAAAAAA</a>
-                            </td>
+                            <td>AAAAAAAAAAA</td>
                             <td>2018-01-01</td>
                             <td>19:00:00</td>
-                            <td>1000</td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm"
                                         onclick="change_status(1)" value="0">已停用
@@ -103,7 +87,7 @@
                                 <button type="button" class="btn btn-danger btn-sm"
                                         onclick="remind(1)">删除
                                 </button>
-                                <a href="newsview.html?id=1" target="_blank">
+                                <a href="https://www.baidu.com/img/bd_logo1.png" target="_blank">
                                     <button type="button" class="btn btn-success btn-sm">预览</button>
                                 </a>
                             </td>
@@ -140,99 +124,13 @@
 
 
 <script>
-    function search_by_title() {
-        let title = document.getElementById("title").value;
-        $.ajax({
-            type: 'GET',
-            url: '/apis/news/?title='+title,
-            data: {},
-            success: function (data, result) {
-                // 正常返回
-                if ("success" == result){
-                    let json = JSON.parse(data);
-                    let page_count = json.page_count;
-                    let curr_page = json.curr_page;
-                    let all_count = json.all_count
-                    let news = json.data;
-                    //获取tbody节点
-                    let tbody = document.getElementById("tbody");
-                    //清空节点原内容
-                    tbody.innerHTML = "";
-                    //循环的塞入新的内容
-                    for (let i = 0; i < news.length; i++) {
-                        let id = i + 1 + 20 * (curr_page - 1);
-                        if (news[i].status == 0) {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                "<td><a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a></td>" +
-                                "<td>" + news[i].date + "</td>" +
-                                "<td>" + news[i].time + "</td>" +
-                                "<td>" + news[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + news[i].nid + ')" value="0">已停用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除 </button>' +
-                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        } else {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                "<td>" +
-                                "<a href=\"newsedit.html" + news[i].nid + "\">" + news[i].title + "</a>" +
-                                "</td>" +
-                                "<td>" + news[i].date + "</td>" +
-                                "<td>" + news[i].time + "</td>" +
-                                "<td>" + news[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + news[i].nid + ')" value="1">已启用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除' +
-                                '</button> ' +
-                                '<a href= "newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        }
-                    }
-                    //重新符之搜索title
-                    var record = document.getElementById("record");
-                    var paging = document.getElementById("paging");
-                    paging.innerHTML = "";
-                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
-                    if (page_count >= 7) {
-                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
-                            if (i < 0) {
-                                continue;
-                            }
-                            let id = i + 1;
-                            if (id == curr_page) {
-                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
-                            } else {
-                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
-                            }
-                        }
-                    } else {
-                        for (let i = 0; i < page_count; i++) {
-                            let id = i + 1;
-                            if (id == curr_page) {
-                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
-                            } else {
-                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
-                            }
-                        }
-                    }
-                } else {
-                    alert("error!")
-                }
-            }
-
-        });
-    }
 
     function change_status(id) {
         var but = event.target;
         $.ajax({
             type: 'POST',
-            url: '/apis/news/status/',
-            data: {'nid': id},
+            url: '/apis/pictures/status/',
+            data: {'pid': id},
             success: function (data, result) {
                 if ('success' == result) {
                     // 正常返回
@@ -261,7 +159,7 @@
         let title = document.getElementById("title").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/news/?title='+ title +'&page=' + page,
+            url: '/apis/projects/?title='+ title +'&page=' + page,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -270,41 +168,40 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let news = json.data;
+                    let projects = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < news.length; i++) {
+                    for (let i = 0; i < projects.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (news[i].status == 0) {
+                        if (projects[i].status == 0) {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                "<td><a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a></td>" +
-                                "<td>" + news[i].date + "</td>" +
-                                "<td>" + news[i].time + "</td>" +
-                                "<td>" + news[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + news[i].nid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td><a href=\"projectsedit.html?id=" + projects[i].pid + "\">" + projects[i].title + "</a></td>" +
+                                "<td>" + projects[i].date + "</td>" +
+                                "<td>" + projects[i].time + "</td>" +
+                                "<td>" + projects[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + projects[i].pid + ')" value="0">已停用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除 </button>' +
-                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + projects[i].pid + ')">删除 </button> ' +
+                                '<a href="projectsview.html?id=' + projects[i].pid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
                         } else {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
                                 "<td>" +
-                                "<a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a>" +
+                                "<a href=\"projectsedit.html?id=" + projects[i].pid + "\">" + projects[i].title + "</a>" +
                                 "</td>" +
-                                "<td>" + news[i].date + "</td>" +
-                                "<td>" + news[i].time + "</td>" +
-                                "<td>" + news[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + news[i].nid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>" + projects[i].date + "</td>" +
+                                "<td>" + projects[i].time + "</td>" +
+                                "<td>" + projects[i].reader + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + projects[i].pid + ')" value="1">已启用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除' +
-                                '</button> ' +
-                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + projects[i].pid + ')">删除</button> ' +
+                                '<a href="projectsview.html?id=' + projects[i].pid + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
                         }
@@ -344,10 +241,10 @@
         });
     }
 
-    function load_event_data() {
+    function load_prctures_data() {
         $.ajax({
             type: 'GET',
-            url: '/apis/news/',
+            url: '/apis/pictures/',
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -356,41 +253,36 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let news = json.data;
+                    let projects = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < news.length; i++) {
+                    for (let i = 0; i < projects.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (news[i].status == 0) {
+                        if (projects[i].status == 0) {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                "<td><a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a></td>" +
-                                "<td>" + news[i].date + "</td>" +
-                                "<td>" + news[i].time + "</td>" +
-                                "<td>" + news[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + news[i].nid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" + projects[i].content + "</td>" +
+                                "<td>" + projects[i].date + "</td>" +
+                                "<td>" + projects[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + projects[i].pid + ')" value="0">已停用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除 </button>' +
-                                '<a href="newsview.html?id=' + news[i].nid + ' "target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + projects[i].pid + ')">删除 </button> ' +
+                                '<a href="' + projects[i].link + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
                         } else {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
+                                "<td>" + projects[i].content + "</td>" +
+                                "<td>" + projects[i].date + "</td>" +
+                                "<td>" + projects[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + projects[i].pid + ')" value="1">已启用</button>' + "</td>" +
                                 "<td>" +
-                                "<a href=\"newsedit.html?id=" + news[i].nid + "\">" + news[i].title + "</a>" +
-                                "</td>" +
-                                "<td>" + news[i].date + "</td>" +
-                                "<td>" + news[i].time + "</td>" +
-                                "<td>" + news[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + news[i].nid + ')" value="1">已启用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + news[i].nid + ')">删除' +
-                                '</button> ' +
-                                '<a href="newsview.html?id=' + news[i].nid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + projects[i].pid + ')">删除</button> ' +
+                                '<a href="projectsview.html?id=' + projects[i].pid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
                         }
@@ -430,7 +322,7 @@
         })
     }
     $(document).ready(function () {
-        load_event_data()
+        load_prctures_data();
     })
 </script>
 
@@ -445,14 +337,14 @@
             ok: function () {
                 $.ajax({
                     type: 'POST',
-                    url: '/apis/news/delete/',
-                    data: {'nid': id},
+                    url: '/apis/pictures/delete/',
+                    data: {'pid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
-                                load_event_data();
+                                load_prctures_data();
                             }else{
                                 alert("删除失败:" + json.message);
                             }

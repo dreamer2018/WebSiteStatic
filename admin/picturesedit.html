@@ -1,0 +1,492 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/datepicker/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" type="text/css" href="../css/datepicker/datedropper.css">
+    <link rel="stylesheet" type="text/css" href="../css/datepicker/timedropper.min.css">
+    <link rel="stylesheet" href="css/editormd.css"/>
+    <link rel="shortcut icon" href="../images/xiyoulinux.png">
+    <title>活动管理</title>
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="css/sb-bk-theme.css" rel="stylesheet">
+    <link href="css/bk.css" rel="stylesheet">
+    <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+
+</head>
+<body>
+
+<div id="wrapper">
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="header">
+        <script>
+            $(function () {
+                $("#header").load("header.html");
+            })
+        </script>
+    </nav>
+
+
+    <div id="page-wrapper">
+        <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="row page-header-box">
+                <div class="col-lg-12">
+                    <h1 class="page-header">
+                        项目管理
+                    </h1>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    编辑项目
+                </div>
+
+                <br/>
+                <br/>
+                <br/>
+
+                <div class="container">
+                    <form name="myform">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">标题：</span>
+                                    <input type="text" class="form-control" name="title" id="title" placeholder="在此输入标题"
+                                           value="">
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <span style="margin: 0 auto;color: red;font-size: 20px;" id="message"></span>
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group ">
+                                    <span class="input-group-addon">日期：</span>
+                                    <input type="text" class="form-control" name="date" id="pickdate"
+                                           placeholder="在此输入日期"
+                                           value="">
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">时间：</span>
+                                    <input type="text" class="form-control" name="time" id="picktime"
+                                           placeholder="在此输入时间"
+                                           value="">
+                                </div>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <span class="input-group-addon">开发组</span>
+                                    <select class="form-control" id="devgroup_select">
+                                        <option>深圳</option>
+                                        <option>广州</option>
+                                        <option>北京</option>
+                                        <option>上海</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">项目链接：</span>
+                                    <input type="text" class="form-control" name="link" id="link" placeholder="多个标签逗号隔开"
+                                           value="">
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+                        <input type="hidden" id="poster">
+                        <div id="load_poster">
+                        </div>
+                        <br/>
+                        <div id="test-editormd">
+                            <textarea style="display:none;width: 97%" id="text"></textarea>
+                        </div>
+                        <br/>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <div class="input-group">
+                                    <input type="button" class="btn btn-success" value="提交" name="submit"
+                                           onclick="sunmit_data()">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <br/>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+    </div>
+    <!-- /#page-wrapper -->
+</div>
+
+
+<!--editor-md 依赖 -->
+<script src="js/jquery.min.js"></script>
+<script src="js/editormd.min.js"></script>
+
+<!--bootstrap依赖-->
+
+<script src="js/bootstrap.min.js"></script>
+
+<!--datepicter的依赖-->
+<script type="text/javascript" charset="utf-8" src="../js/datepicker/datedropper.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/datepicker/timedropper.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/datepicker/datepicker.js"></script>
+
+<script type="text/javascript">
+    let Editor;
+    $(document).ready(function () {
+        Editor = editormd("test-editormd", {
+            width: "100%",
+            height: 640,
+            syncScrolling: "single",
+            path: "../lib/",
+            saveHTMLToTextarea: true,
+            onfullscreen: function () {
+                let input = document.getElementsByClassName("form-control");
+                for (let i = 0; i < input.length; i++) {
+                    input[i].type = "hidden";
+                }
+                input = document.getElementsByName("submit");
+                for (let i = 0; i < input.length; i++) {
+                    input[i].type = "hidden";
+                }
+
+            },
+            onfullscreenExit: function () {
+                let input = document.getElementsByClassName("form-control");
+                for (var i = 0; i < input.length; i++) {
+                    input[i].type = "text";
+                }
+                input = document.getElementsByName("submit");
+                for (i = 0; i < input.length; i++) {
+                    input[i].type = "submit";
+                }
+            }
+        });
+    });
+
+    function getHtml() {
+        return Editor.getHTML();
+    }
+
+    function getMarkDown() {
+        return Editor.getMarkdown();
+    }
+
+    function addContent(markdown) {
+        document.getElementById("text").value = markdown
+    }
+</script>
+
+<script>
+    function devgroup_selector(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/devgroup/?page_size=10000',
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result) {
+                    let json = JSON.parse(data);
+                    let devgroup = json.data;
+                    let html = "";
+                    if (json.status) {
+                        //循环的塞入新的内容
+                        for (let i = 0; i < devgroup.length; i++) {
+                            if (devgroup[i].gid == id) {
+                                html += "\"<option value=\"" + devgroup[i].gid + "\" selected = \"selected\">" + devgroup[i].name + "</option>\"";
+                            } else {
+                                html += "\"<option value=\"" + devgroup[i].gid + "\">" + devgroup[i].name + "</option>\"";
+                            }
+                        }
+                        $('#devgroup_select').empty();
+                        $('#devgroup_select').append(html);
+                    } else {
+                        alert("Error:" + devgroup.message)
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        })
+    }
+
+    function analyze_parameter(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
+        }
+    }
+
+    function load_projects_info(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/projects/?id=' + id,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result) {
+                    let json = JSON.parse(data);
+                    let project = json.data;
+                    if (json.status) {
+                        let title = project.title;
+                        let date = project.date;
+                        let time = project.time;
+                        let link = project.link;
+                        let poster = project.poster;
+                        let makrkdown = project.origin;
+                        let author = project.author;
+                        $('#title').val(title);
+                        $('#pickdate').val(date);
+                        $('#picktime').val(time);
+                        $('#link').val(link);
+                        devgroup_selector(author);
+                        load_poster(poster);
+                        addContent(makrkdown);
+                    } else {
+                        alert("Error:" + json.message)
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+        });
+    }
+
+    function load_poster(url) {
+        let html;
+        if (url == null) {
+            html = "<div class='row'>" +
+                "<div class=\"col-xs-2\">" +
+                "<span>项目图标(小于5M):</span>" +
+                "</div>" +
+                "<div class=\"col-xs-3\">" +
+                "<input type=\"file\" id=\"inputfile\" name=\"poster\" onchange=\"isPic(0)\">" +
+                "</div>" +
+                "<div class=\"col-xs-2\">" +
+                "<input type=\"button\" name=\"poster\" value=\"上传\" onchange=\"isPic(0)\" onclick='FileUpload()' >" +
+                "</div>" +
+                "</div>";
+        } else {
+            $('#poster').val(url);
+            html = "<div class='row' >" +
+                "<div id=\"origin_poster\"  class=\"col-xs-2\"> " +
+                "<span>已上传的项目图标:</span> " +
+                "<img src=\"" + resolve_poster(url) + "\" style=\"height: 200px\">" +
+                "</div>" +
+                "</div>" +
+                "<div class='row'>" +
+                "<br/>" +
+                "<br/>" +
+                "<div class=\"col-xs-2\">" +
+                "<span>更改项目图标(小于5M):" +
+                "</div>" +
+                "<div class=\"col-xs-3\">" +
+                "<input type=\"file\" id=\"inputfile\" name=\"poster\" onchange=\"isPic(1)\">" +
+                "</div>" +
+                "<div class=\"col-xs-3\">" +
+                "<input type=\"button\" name=\"poster\" value=\"上传\" onchange=\"isPic(1)\" onclick='FileUpload()'>" +
+                "</div>" +
+                "</div>";
+        }
+
+        $('#load_poster').append(html);
+    }
+
+    function resolve_poster(url) {
+        if (url.search('http') >= 0 || url.search('https') >= 0) {
+            return url;
+        } else {
+            return '/apis/' + url
+        }
+    }
+
+    function FileUpload() {
+        let form_data = new FormData();
+        let file_info = $('#inputfile')[0].files[0];
+        form_data.append('file', file_info);
+        if (file_info == undefined) { //暂且不许要判断是否有附件
+            alert('你没有选择任何文件');
+            return false;
+        }
+
+        // 提交ajax的请求
+        $.ajax({
+            url: "/apis/upload/",
+            type: 'POST',
+            data: form_data,
+            processData: false,  // tell jquery not to process the data
+            contentType: false, // tell jquery not to set contentType
+            success: function (data) {
+                let json = JSON.parse(data);
+                if (json.status) {
+                    $('#upload_picture').remove();
+                    let html = "<div class=\"col-xs-3\" id=\"upload_picture\"> " +
+                        "<img src=\"/apis/" + json.data.url + "\" style=\"height: 200px\">" +
+                        "</div>";
+                    $('#poster').val(json.data.url);
+                    $('#load_poster').append(html);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            }
+        }); // end ajax
+    }
+
+    $(document).ready(function () {
+        let id = analyze_parameter('id');
+        if (id != null) {
+            load_projects_info(id);
+        } else {
+            load_poster(null);
+            devgroup_selector(18)
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    function sunmit_data() {
+        let title = $('#title').val();
+        let date = $('#pickdate').val();
+        let time = $('#picktime').val();
+        let author = $('#devgroup_select').val();
+        let link = $('#link').val();
+        let poster = $('#poster').val();
+        let makrkdown = getMarkDown();
+        let content = getHtml();
+        $('#message').text("");
+        if (title == '') {
+            $('#message').text("标题不能为空！");
+        } else if (poster == '') {
+            $('#message').text("海报不能为空！");
+        } else if (makrkdown == '' || content == '') {
+            $('#message').text("内容不能为空！");
+        } else if (author == '') {
+            $('#message').text("必须选择开发组");
+        } else if (link == '') {
+            $('#message').text("项目链接不能为空");
+        } else {
+
+            let id = analyze_parameter('id');
+            let data;
+            let url;
+            if (id != null){
+                data = {
+                    'pid': id,
+                    'title': title,
+                    'content': content,
+                    'origin': makrkdown,
+                    'poster': poster,
+                    'date': date,
+                    'time': time,
+                    'link': link,
+                    'author': author,
+                };
+                url = "/apis/projects/alter/";
+            }else{
+                data = {
+                    'title': title,
+                    'content': content,
+                    'origin': makrkdown,
+                    'poster': poster,
+                    'date': date,
+                    'time': time,
+                    'link': link,
+                    'author': author,
+                };
+                url = "/apis/projects/add/";
+            }
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function (rtu, result) {
+                    if ('success' == result) {
+                        let json = JSON.parse(rtu);
+                        if (json.status) {
+                            alert('提交成功！');
+                            window.location.href = 'projects.html'
+                        } else {
+                            alert(json.message)
+                        }
+                    } else {
+                        alert("error!");
+                    }
+                }
+            });
+        }
+    }
+
+
+    function isPic(status) {
+        let file_types = ["jpg", "png", "gif", "bmp", "JPG", "PNG", "GIF", "BMP"];
+        let file_obj = $('#inputfile')[0].files[0];
+        let file_path = file_obj.name;
+        let file_size = file_obj.size;
+        let file_maxsize = 1024 * 1024 * 10;     //10M
+        if (file_path) {
+            var isnext = false;
+            var fileend = file_path;
+            while (true) {
+                if (fileend.indexOf('.') < 0) {
+                    break;
+                }
+                fileend = fileend.substring(fileend.indexOf('.') + 1);
+            }
+
+            if (file_types && file_types.length > 0) {
+                for (let i = 0; i < file_types.length; i++) {
+                    if (file_types[i] == fileend) {
+                        isnext = true;
+                        break;
+                    }
+                }
+            }
+            if (!isnext) {
+                alert("只能上传jpg,png,gif文件！");
+                $('#inputfile').val("");
+                return false;
+            }
+        } else {
+            if (status == 1) {
+                return true;
+            } else {
+                alert("活动海报不能为空！");
+                return false;
+            }
+        }
+
+        if (file_size > file_maxsize) {
+            alert("图片大小不能大于" + file_maxsize / 1024 / 1024 + "M！");
+            $('#inputfile').val("");
+            return false;
+        } else if (file_size <= 0) {
+            alert("图片大小不能为0M！");
+            $('#inputfile').val("");
+            return false;
+        } else {
+            $("#origin_poster").empty();
+            return true;
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -46,7 +46,7 @@
 <div class="container mtb">
     <div class="row">
         <!-- BLOG POSTS LIST -->
-        <div class="col-lg-10 col-lg-offset-1" id="news_list">
+        <div class="col-lg-10 col-lg-offset-1" id="projects_list">
             <!-- Blog Post -->
         </div>
     </div>
@@ -175,25 +175,23 @@
             return null;
         }
     }
-    function load_event_info(id) {
+    function load_project_info(id) {
         $.ajax({
             type: 'GET',
-            url: '/apis/news/?id=' + id,
+            url: '/apis/projects/?id=' + id,
             data: {},
             success: function (data, result) {
                 if ("success" == result){
                     let json = JSON.parse(data);
-                    let event = json.data;
-                    let title = event.title;
-                    let date = event.date;
-                    let time = event.time;
-                    let address = event.address;
-                    let labels = event.labels;
-                    let poster = event.poster;
-                    let makrkdown = event.origin;
-                    let content = event.content;
-                    let reader = event.reader;
-                    let tags_html = resolve_tags(labels);
+                    let project = json.data;
+                    let title = project.title;
+                    let date = project.date;
+                    let time = project.time;
+                    let link = project.link;
+                    let poster = project.poster;
+                    let makrkdown = project.origin;
+                    let content = project.content;
+                    let reader = project.reader;
                     let innerHTML = "" +
                         "<div class=\"row event\" data-event-date=\""+ date +"\">" +
                         "<div class=\"col-lg-9\">" +
@@ -202,10 +200,7 @@
                         "</div>" +
                         "<div class=\"event-meta\">" +
                         "<span><strong><i class=\"fa fa-calendar\"></i> 时间: </strong>"+ date +"&nbsp;&nbsp;"+ time +"</span>" +
-                        "<span><strong><i class=\"fa fa-map-marker\"></i> 地点:</strong>"+ address +"</span>" +
-                        "<span class=\"event-tags\">" +
-                        tags_html +
-                        "</span>" +
+                        "<span><strong><i class=\"fa fa-map-marker\"></i> 项目链接: &nbsp;</strong><a href='"+ link +"'>"+ link +"</a></span>" +
                         "</div>" +
                         "<div class=\"event-content\">" +
                         resolve_content(content) +
@@ -216,8 +211,8 @@
                         "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
                         "</div>" +
                         "</div>";
-                    $('#news_list').empty();
-                    $('#news_list').append(innerHTML);
+                    $('#projects_list').empty();
+                    $('#projects_list').append(innerHTML);
                 } else {
                     alert("error!")
                 }
@@ -263,7 +258,7 @@
     $(document).ready(function () {
         let id = analyze_parameter('id');
         if(id != null){
-            load_event_info(id);
+            load_project_info(id);
         }
     })
 </script>

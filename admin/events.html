@@ -171,9 +171,10 @@
                                 "<td>" + events[i].time + "</td>" +
                                 "<td>" + events[i].address + "</td>" +
                                 "<td>" + events[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' +
+                                "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button> ' +
                                 '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
@@ -187,10 +188,10 @@
                                 "<td>" + events[i].time + "</td>" +
                                 "<td>" + events[i].address + "</td>" +
                                 "<td>" + events[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button> ' +
+                                "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除' +
-                                '</button> ' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除</button> ' +
                                 '<a href= "eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
@@ -290,10 +291,11 @@
                                 "<td>" + events[i].time + "</td>" +
                                 "<td>" + events[i].address + "</td>" +
                                 "<td>" + events[i].reader + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' +
+                                "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button>' +
-                                '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button> ' +
+                                '<a href="eventsview.html?id=' + events[i].eid + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
                         } else {
@@ -308,8 +310,7 @@
                                 "<td>" + events[i].reader + "</td>" +
                                 "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除' +
-                                '</button> ' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除</button> ' +
                                 '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
@@ -380,7 +381,7 @@
                                 "<td>" + events[i].reader + "</td>" +
                                 "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + events[i].eid + ')" value="0">已停用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除 </button> ' +
                                 '<a href="eventsview.html?id=' + events[i].eid + ' "target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";
@@ -396,8 +397,7 @@
                                 "<td>" + events[i].reader + "</td>" +
                                 "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + events[i].eid + ')" value="1">已启用</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除' +
-                                '</button> ' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + events[i].eid + ')">删除</button> ' +
                                 '<a href="eventsview.html?id=' + events[i].eid + '"target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
                                 "</td>" +
                                 "</tr>";

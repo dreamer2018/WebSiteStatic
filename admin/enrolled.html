@@ -39,7 +39,7 @@
             <div class="row page-header-box">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        照片管理
+                        报名记录管理
                     </h1>
                 </div>
             </div>
@@ -47,34 +47,18 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    照片列表
+                    报名列表
                 </div>
 
                 <div>
-                    <div class="king-wrapper">
-                        <form class="form-inline king-search-form king-no-bg mt15 mb15 pull-left"
-                              style="margin-left: 2%">
-                            <div class="form-group">
-                                <label>简述：</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="请输入简述" name="title"
-                                           id="title"
-                                           value="">
-                                </div>
-                            </div>
-                            <button type="button" class="king-btn king-info" onclick="search_by_title()">搜索</button>
-                        </form>
-                        <a href="picturesedit.html" class="king-btn king-info pull-right mt15 ml15"
-                           style="margin-right: 2%;">
-                            <i class="fa fa-user-plus mr5"></i>新增照片
-                        </a>
-                    </div>
 
                     <table class="table table-out-bordered table-hover">
                         <thead>
                         <tr>
                             <th style="width:50px;" class="tc">序号</th>
-                            <th>简述</th>
+                            <th>昵称</th>
+                            <th>Emali</th>
+                            <th>活动ID</th>
                             <th>日期</th>
                             <th>时间</th>
                             <th>状态</th>
@@ -84,24 +68,23 @@
                         <tbody id="tbody">
                         <tr>
                             <td>1</td>
-                            <td>AAAAAAAAAAA</td>
+                            <td>AAAAA</td>
+                            <td><a href="mailto:zhoupan@mial.com">zhoupan@mial.com</a></td>
+                            <td>1</td>
                             <td>2018-01-01</td>
                             <td>19:00:00</td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm"
-                                        onclick="change_status(1)" value="0">已停用
+                                        onclick="change_status(1)" value="0">未处理
                                 </button>
                                 <button type="button" class="btn btn-info btn-sm"
-                                        onclick="change_status(1)" value="1">已启用
+                                        onclick="change_status(1)" value="1">已处理
                                 </button>
                             </td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm"
                                         onclick="remind(1)">删除
                                 </button>
-                                <a href="https://www.baidu.com/img/bd_logo1.png" target="_blank">
-                                    <button type="button" class="btn btn-success btn-sm">预览</button>
-                                </a>
                             </td>
                         <tr>
                         </tbody>
@@ -136,79 +119,23 @@
 
 
 <script>
-    function search_by_title() {
-        let content = document.getElementById("title").value;
+
+    function get_user_by_id(id) {
+        var user_data = null;
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/?content='+ content,
+            url: '/apis/anonymous/?id=' + id,
             data: {},
+            async: false,
             success: function (data, result) {
                 // 正常返回
                 if ("success" == result){
                     let json = JSON.parse(data);
-                    let page_count = json.page_count;
-                    let curr_page = json.curr_page;
-                    let all_count = json.all_count
-                    let pictures = json.data;
-                    //获取tbody节点
-                    let tbody = document.getElementById("tbody");
-                    //清空节点原内容
-                    tbody.innerHTML = "";
-                    //循环的塞入新的内容
-                    for (let i = 0; i < pictures.length; i++) {
-                        let id = i + 1 + 20 * (curr_page - 1);
-                        if (pictures[i].status == 0) {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="0">已停用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除 </button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        } else {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="1">已启用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除</button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        }
-                    }
-                    //重新符之搜索title
-                    var record = document.getElementById("record");
-                    var paging = document.getElementById("paging");
-                    paging.innerHTML = "";
-                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
-                    if (page_count >= 7) {
-                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
-                            if (i < 0) {
-                                continue;
-                            }
-                            let id = i + 1;
-                            if (id == curr_page) {
-                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
-                            } else {
-                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
-                            }
-                        }
-                    } else {
-                        for (let i = 0; i < page_count; i++) {
-                            let id = i + 1;
-                            if (id == curr_page) {
-                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
-                            } else {
-                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
-                            }
-                        }
+                    let anonymous = json.data;
+                    if(json.status){
+                        user_data = anonymous
+                    }else{
+                        alert("Error:" + json.message);
                     }
                 } else {
                     alert("error!")
@@ -216,28 +143,29 @@
             }
 
         });
+        return user_data
     }
 
     function change_status(id) {
         var but = event.target;
         $.ajax({
             type: 'POST',
-            url: '/apis/pictures/status/',
-            data: {'pid': id},
+            url: '/apis/enrolled/status/',
+            data: {'eid': id},
             success: function (data, result) {
                 if ('success' == result) {
                     // 正常返回
                     let json = JSON.parse(data);
                     let resp_status = json.status;
                     if (resp_status) {
-                        let blog_status = json.data.status;
-                        if (blog_status == 1) {
+                        let project_status = json.data.status;
+                        if (project_status == 1) {
                             but.value = 1;
-                            but.innerHTML = "已启用";
+                            but.innerHTML = "已处理";
                             but.className = "btn btn-info btn-sm";
                         } else {
                             but.value = 0;
-                            but.innerHTML = "已停用";
+                            but.innerHTML = "未处理";
                             but.className = "btn btn-warning btn-sm";
                         }
                     } else {
@@ -249,10 +177,10 @@
     }
 
     function page_turning(page) {
-        let content = document.getElementById("title").value;
+        let title = document.getElementById("title").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/?title='+ content +'&page=' + page,
+            url: '/apis/enrolled/?title='+ title +'&page=' + page,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -261,36 +189,49 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let pictures = json.data;
+                    let enrolled = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < pictures.length; i++) {
+                    for (let i = 0; i < enrolled.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (pictures[i].status == 0) {
+                        let user_data = get_user_by_id(enrolled[i].uid);
+                        if(user_data == null){
+                            user_data = {
+                                'nickname' : "null",
+                                'email': 'null'
+                            }
+                        }
+
+                        if (enrolled[i].status == 0) {
+
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>"+ user_data.nickname +"</td>" +
+                                "<td><a href='mailto:"+ user_data.email +"'>"+ simple_content(user_data.email)+"</a></td>" +
+                                "<td>" + enrolled[i].obj + "</td>" +
+                                "<td>" + enrolled[i].date + "</td>" +
+                                "<td>" + enrolled[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + enrolled[i].eid + ')" value="0">未处理</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除 </button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + enrolled[i].eid + ')">删除 </button> ' +
+                                '<button type="button" class="btn btn-success btn-sm" onclick="look_content('+ enrolled[i].eid +')">内容详情</button>' +
                                 "</td>" +
                                 "</tr>";
                         } else {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>"+ user_data.nickname +"</td>" +
+                                "<td><a href='mailto:"+ user_data.email +"'>"+ simple_content(user_data.email)+"</a></td>" +
+                                "<td>" + enrolled[i].obj + "</td>" +
+                                "<td>" + enrolled[i].date + "</td>" +
+                                "<td>" + enrolled[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + enrolled[i].eid + ')" value="1">已处理</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除</button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + enrolled[i].eid + ')">删除</button> ' +
+                                '<button type="button" class="btn btn-success btn-sm" onclick="look_content('+ enrolled[i].eid +')">内容详情</button>' +
                                 "</td>" +
                                 "</tr>";
                         }
@@ -330,10 +271,18 @@
         });
     }
 
-    function load_prctures_data() {
+    function simple_content(link) {
+        if(link.length < 40){
+            return link
+        }else{
+            return link.substring(0, 39) + '...'
+        }
+    }
+
+    function load_enrolled_data() {
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/',
+            url: '/apis/enrolled/',
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -342,36 +291,47 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let pictures = json.data;
+                    let enrolled = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < pictures.length; i++) {
+                    for (let i = 0; i < enrolled.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (pictures[i].status == 0) {
+                        let user_data = get_user_by_id(enrolled[i].uid);
+                        if(user_data == null){
+                            user_data = {
+                                'nickname' : "null",
+                                'email': 'null'
+                            }
+                        }
+                        if (enrolled[i].status == 0) {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>"+ user_data.nickname +"</td>" +
+                                "<td><a href='mailto:"+ user_data.email +"'>"+ simple_content(user_data.email)+"</a></td>" +
+                                "<td>" + enrolled[i].obj + "</td>" +
+                                "<td>" + enrolled[i].date + "</td>" +
+                                "<td>" + enrolled[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + enrolled[i].eid + ')" value="0">未处理</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除 </button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + enrolled[i].eid + ')">删除 </button> ' +
+                                '<button type="button" class="btn btn-success btn-sm" onclick="look_content('+ enrolled[i].eid +')">内容详情</button>' +
                                 "</td>" +
                                 "</tr>";
                         } else {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="1">已启用</button>' + "</td>" +
+                                "<td>"+ user_data.nickname +"</td>" +
+                                "<td><a href='mailto:"+ user_data.email +"'>"+ simple_content(user_data.email)+"</a></td>" +
+                                "<td>" + enrolled[i].obj + "</td>" +
+                                "<td>" + enrolled[i].date + "</td>" +
+                                "<td>" + enrolled[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + enrolled[i].eid + ')" value="1">已处理</button>' + "</td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除</button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + enrolled[i].eid + ')">删除</button> ' +
+                                '<button type="button" class="btn btn-success btn-sm" onclick="look_content('+ enrolled[i].eid +')">内容详情</button>' +
                                 "</td>" +
                                 "</tr>";
                         }
@@ -410,22 +370,148 @@
 
         })
     }
-    $(document).ready(function () {
-        load_prctures_data();
-    })
 
-    function resolve_poster(link) {
-        if(link.search('http') >= 0 || link.search('https') >= 0){
-            return link;
-        }else{
-            return '/apis' + link
+    function analyze_parameter(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
         }
     }
 
+    function load_enrolled_by_eid(eid){
+        $.ajax({
+            type: 'GET',
+            url: '/apis/enrolled/?obj=' + eid,
+            data: {},
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let page_count = json.page_count;
+                    let curr_page = json.curr_page;
+                    let all_count = json.all_count
+                    let enrolled = json.data;
+                    //获取tbody节点
+                    let tbody = document.getElementById("tbody");
+                    //清空节点原内容
+                    tbody.innerHTML = "";
+                    //循环的塞入新的内容
+                    for (let i = 0; i < enrolled.length; i++) {
+                        let id = i + 1 + 20 * (curr_page - 1);
+                        let user_data = get_user_by_id(enrolled[i].uid);
+                        if(user_data == null){
+                            user_data = {
+                                'nickname' : "null",
+                                'email': 'null'
+                            }
+                        }
+                        if (enrolled[i].status == 0) {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td>"+ user_data.nickname +"</td>" +
+                                "<td><a href='mailto:"+ user_data.email +"'>"+ simple_content(user_data.email)+"</a></td>" +
+                                "<td>" + enrolled[i].obj + "</td>" +
+                                "<td>" + enrolled[i].date + "</td>" +
+                                "<td>" + enrolled[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + enrolled[i].eid + ')" value="0">未处理</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + enrolled[i].eid + ')">删除 </button> ' +
+                                '<button type="button" class="btn btn-success btn-sm" onclick="look_content('+ enrolled[i].eid +')">内容详情</button>' +
+                                "</td>" +
+                                "</tr>";
+                        } else {
+                            tbody.innerHTML += "<tr>" +
+                                "<td>" + id + "</td>" +
+                                "<td>"+ user_data.nickname +"</td>" +
+                                "<td><a href='mailto:"+ user_data.email +"'>"+ simple_content(user_data.email)+"</a></td>" +
+                                "<td>" + enrolled[i].obj + "</td>" +
+                                "<td>" + enrolled[i].date + "</td>" +
+                                "<td>" + enrolled[i].time + "</td>" +
+                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + enrolled[i].eid + ')" value="1">已处理</button>' + "</td>" +
+                                "<td>" +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + enrolled[i].eid + ')">删除</button> ' +
+                                '<button type="button" class="btn btn-success btn-sm" onclick="look_content('+ enrolled[i].eid +')">内容详情</button>' +
+                                "</td>" +
+                                "</tr>";
+                        }
+                    }
+                    //重新符之搜索title
+                    var record = document.getElementById("record");
+                    var paging = document.getElementById("paging");
+                    paging.innerHTML = "";
+                    record.innerHTML = "共" + all_count + "条记录，当前第" + curr_page + "/" + page_count + "页，每页20条记录";
+                    if (page_count >= 7) {
+                        for (let i = curr_page - 4; i < curr_page + 3 && i < page_count; i++) {
+                            if (i < 0) {
+                                continue;
+                            }
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    } else {
+                        for (let i = 0; i < page_count; i++) {
+                            let id = i + 1;
+                            if (id == curr_page) {
+                                paging.innerHTML += "<li page-index=" + id + " class=\"active\"><a>" + id + "</a></li>";
+                            } else {
+                                paging.innerHTML += "<li page-index=" + id + " onclick=\"page_turning(" + id + ")\"><a>" + id + "</a></li>";
+                            }
+                        }
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        })
+    }
+
+    $(document).ready(function () {
+        let eid = analyze_parameter('eid');
+        if(eid == null){
+            load_enrolled_data()
+        }else{
+            load_enrolled_by_eid(eid)
+        }
+
+    })
 </script>
 
 <script type="text/javascript">
 
+
+    function get_enrolled_by_id(id){
+        var enrolled = null;
+        $.ajax({
+            type: 'GET',
+            url: '/apis/enrolled/?id=' + id,
+            data: {},
+            async: false,
+            success: function (data, result) {
+                // 正常返回
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let tmp = json.data;
+                    if(json.status){
+                       enrolled = tmp
+                    }else{
+                        alert("Error:" + json.message);
+                    }
+                } else {
+                    alert("error!")
+                }
+            }
+
+        });
+        return enrolled;
+    }
     function remind(id) {
         var d = dialog({
             width: 260,
@@ -435,14 +521,14 @@
             ok: function () {
                 $.ajax({
                     type: 'POST',
-                    url: '/apis/pictures/delete/',
-                    data: {'pid': id},
+                    url: '/apis/enrolled/delete/',
+                    data: {'eid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
-                                load_prctures_data();
+                                load_enrolled_data();
                             }else{
                                 alert("删除失败:" + json.message);
                             }
@@ -456,6 +542,26 @@
         });
         d.showModal();
     }
+
+    function look_content(id) {
+        let enrolled = get_enrolled_by_id(id);
+        if(enrolled != null) {
+            let html = "<span>内容："+ enrolled.content +"</span>" +
+                "<br/>" +
+                "<br/>" +
+                "<span>Email："+ enrolled.email +"</span>";
+            var d = dialog({
+                width: 260,
+                title: '消息提醒',
+                content: html,
+                okValue: '确定',
+                ok: function () {
+                },
+            });
+            d.showModal();
+        }
+    }
+
 </script>
 
 </body>

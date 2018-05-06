@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="../images/xiyoulinux.png">
+    <title>西邮Linux兴趣小组</title>
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/style.css" rel="stylesheet">
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <script type="text/javascript" src="../js/jquery-2.1.1.min.js"></script>
+</head>
+
+<body>
+
+
+<!--导航栏-->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation" id="header">
+    <script>
+        $(function () {
+            $("#header").load("header.html");
+        })
+    </script>
+</div>
+<!--导航栏结束-->
+
+<div class="container mtb">
+    <div class="row">
+        <!-- BLOG POSTS LIST -->
+        <div class="col-lg-10 col-lg-offset-1" id="projects_list">
+            <!-- Blog Post -->
+        </div>
+    </div>
+</div>
+
+
+
+<!--网站底部-->
+<footer id="footer">
+    <script>
+        $(function () {
+            $("#footer").load("footer.html");
+        })
+    </script>
+</footer>
+<!--网站底部-->
+
+<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/retina-1.1.0.js"></script>
+<script type="text/javascript" src="../js/jquery.hoverdir.js"></script>
+<script type="text/javascript" src="../js/jquery.hoverex.min.js"></script>
+<script type="text/javascript" src="../js/jquery.prettyPhoto.js"></script>
+<script type="text/javascript" src="../js/jquery.isotope.min.js"></script>
+<script type="text/javascript" src="../js/custom.js"></script>
+<script type="text/javascript" src="../js/main.js"></script>
+
+
+
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var today = function () {
+            var pad = function (number) {
+                var r = String(number);
+                if (r.length === 1) {
+                    r = '0' + r;
+                }
+                return r;
+            };
+            var _today = new Date();
+            return Date.parse(
+                _today.getFullYear().toString() + "-"
+                + pad(_today.getMonth() + 1) + "-"
+                + pad(_today.getDate())
+            );
+        }();
+        $('#recent-events .event').each(function () {
+            var event_date = Date.parse($(this).attr("data-event-date")),
+                label = "";
+            if (today > event_date) {
+                label = "<span class='label label-default'>Finished</span>";
+            } else if (today < event_date) {
+                label = "<span class='label label-warning'>Upcoming</span>";
+            } else {
+                label = "<span class='label label-primary'>Finishing</span>";
+            }
+            $(this).find(".event-meta").append(label);
+        });
+        $('.container .copy-right-content').each(function () {
+            var year = new Date().getFullYear();
+            $(this).find(".year").append(year);
+        })
+    });
+</script>
+<script>
+    function analyze_parameter(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
+        }
+    }
+    function load_project_info(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/projects/?id=' + id,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let project = json.data;
+                    let title = project.title;
+                    let date = project.date;
+                    let time = project.time;
+                    let link = project.link;
+                    let poster = project.poster;
+                    let makrkdown = project.origin;
+                    let content = project.content;
+                    let reader = project.reader;
+                    let innerHTML = "" +
+                        "<div class=\"row event\" data-event-date=\""+ date +"\">" +
+                        "<div class=\"col-lg-9\">" +
+                        "<div class=\"event-title\">" +
+                        "<a href=\"#\"><h3 class=\"ctitle\">"+ title +"</h3></a>" +
+                        "</div>" +
+                        "<div class=\"event-meta\">" +
+                        "<span><strong><i class=\"fa fa-calendar\"></i> 时间: </strong>"+ date +"&nbsp;&nbsp;"+ time +"</span>" +
+                        "<span><strong><i class=\"fa fa-map-marker\"></i> 项目链接: &nbsp;</strong><a href='"+ link +"'>"+ link +"</a></span>" +
+                        "</div>" +
+                        "<div class=\"event-content\">" +
+                        resolve_content(content) +
+                        "<p>阅读量："+ reader +"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#\">[ReadMore]</a></p>" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class=\"col-lg-3\">" +
+                        "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
+                        "</div>" +
+                        "</div>";
+                    $('#projects_list').empty();
+                    $('#projects_list').append(innerHTML);
+                } else {
+                    alert("error!")
+                }
+            }
+        });
+    }
+    function resolve_poster(url) {
+        if(url.search('http') >= 0 || url.search('https') >= 0){
+            return url;
+        }else{
+            return '/apis/' + url
+        }
+    }
+    function resolve_tags(labels){
+        let str = "";
+        let tags_html = "";
+        for (let i = 0; i < labels.length; i++) {
+            if (labels.charAt(i) == ',' || labels.charAt(i) == '，') {
+                if (!(str == "" || str == "," || str == "，")) {
+                    tags_html += "<span class=\"label label-success\">" + str +"</span>";
+                }
+                str = "";
+            } else {
+                str += labels.charAt(i);
+            }
+        }
+        if (!(str == "" || str == "," || str == "，")) {
+            tags_html += "<span class=\"label label-success\">" + str + "</span>";
+        }
+        return tags_html;
+    }
+
+    function resolve_content(content){
+        let rtu=content;
+        if(content.length < 2000){
+            for(let i=0; i<(2000-content.length)/80; i++){
+                rtu += "<br/>"
+            }
+        }
+        return rtu;
+    }
+
+    $(document).ready(function () {
+        let id = analyze_parameter('id');
+        if(id != null){
+            load_project_info(id);
+        }
+    })
+</script>
+
+</body>
+</html>

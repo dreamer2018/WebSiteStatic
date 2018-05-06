@@ -35,14 +35,14 @@
             <div class="row page-header-box">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        项目管理
+                        照片管理
                     </h1>
                 </div>
             </div>
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    编辑项目
+                    上传照片
                 </div>
 
                 <br/>
@@ -54,8 +54,8 @@
                         <div class="row">
                             <div class="col-xs-3">
                                 <div class="input-group">
-                                    <span class="input-group-addon">标题：</span>
-                                    <input type="text" class="form-control" name="title" id="title" placeholder="在此输入标题"
+                                    <span class="input-group-addon">照片简述：</span>
+                                    <input type="text" class="form-control" name="content" id="content" placeholder="在此输入标题"
                                            value="">
                                 </div>
                             </div>
@@ -81,36 +81,12 @@
                                            value="">
                                 </div>
                             </div>
-                            <div class="col-xs-3">
-                                <div class="input-group">
-                                    <span class="input-group-addon">开发组</span>
-                                    <select class="form-control" id="devgroup_select">
-                                        <option>深圳</option>
-                                        <option>广州</option>
-                                        <option>北京</option>
-                                        <option>上海</option>
-                                    </select>
-                                </div>
-
-                            </div>
                         </div>
                         <br/>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="input-group">
-                                    <span class="input-group-addon">项目链接：</span>
-                                    <input type="text" class="form-control" name="link" id="link" placeholder="多个标签逗号隔开"
-                                           value="">
-                                </div>
-                            </div>
-                        </div>
                         <br/>
-                        <input type="hidden" id="poster">
-                        <div id="load_poster">
-                        </div>
-                        <br/>
-                        <div id="test-editormd">
-                            <textarea style="display:none;width: 97%" id="text"></textarea>
+                        <input type="hidden" id="link">
+                        <input type="hidden" id="link">
+                        <div id="load_link" class="row">
                         </div>
                         <br/>
                         <div class="row">
@@ -145,85 +121,8 @@
 <script type="text/javascript" charset="utf-8" src="../js/datepicker/timedropper.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="../js/datepicker/datepicker.js"></script>
 
-<script type="text/javascript">
-    let Editor;
-    $(document).ready(function () {
-        Editor = editormd("test-editormd", {
-            width: "100%",
-            height: 640,
-            syncScrolling: "single",
-            path: "../lib/",
-            saveHTMLToTextarea: true,
-            onfullscreen: function () {
-                let input = document.getElementsByClassName("form-control");
-                for (let i = 0; i < input.length; i++) {
-                    input[i].type = "hidden";
-                }
-                input = document.getElementsByName("submit");
-                for (let i = 0; i < input.length; i++) {
-                    input[i].type = "hidden";
-                }
-
-            },
-            onfullscreenExit: function () {
-                let input = document.getElementsByClassName("form-control");
-                for (var i = 0; i < input.length; i++) {
-                    input[i].type = "text";
-                }
-                input = document.getElementsByName("submit");
-                for (i = 0; i < input.length; i++) {
-                    input[i].type = "submit";
-                }
-            }
-        });
-    });
-
-    function getHtml() {
-        return Editor.getHTML();
-    }
-
-    function getMarkDown() {
-        return Editor.getMarkdown();
-    }
-
-    function addContent(markdown) {
-        document.getElementById("text").value = markdown
-    }
-</script>
 
 <script>
-    function devgroup_selector(id) {
-        $.ajax({
-            type: 'GET',
-            url: '/apis/devgroup/?page_size=10000',
-            data: {},
-            success: function (data, result) {
-                // 正常返回
-                if ("success" == result) {
-                    let json = JSON.parse(data);
-                    let devgroup = json.data;
-                    let html = "";
-                    if (json.status) {
-                        //循环的塞入新的内容
-                        for (let i = 0; i < devgroup.length; i++) {
-                            if (devgroup[i].gid == id) {
-                                html += "\"<option value=\"" + devgroup[i].gid + "\" selected = \"selected\">" + devgroup[i].name + "</option>\"";
-                            } else {
-                                html += "\"<option value=\"" + devgroup[i].gid + "\">" + devgroup[i].name + "</option>\"";
-                            }
-                        }
-                        $('#devgroup_select').empty();
-                        $('#devgroup_select').append(html);
-                    } else {
-                        alert("Error:" + devgroup.message)
-                    }
-                } else {
-                    alert("error!")
-                }
-            }
-
-        })
-    }
 
     function analyze_parameter(name) {
         var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
@@ -235,30 +134,25 @@
         }
     }
 
-    function load_projects_info(id) {
+    function load_picture_info(id) {
         $.ajax({
             type: 'GET',
-            url: '/apis/projects/?id=' + id,
+            url: '/apis/pictures/?id=' + id,
             data: {},
             success: function (data, result) {
                 if ("success" == result) {
                     let json = JSON.parse(data);
                     let project = json.data;
                     if (json.status) {
-                        let title = project.title;
+                        let content = project.content;
                         let date = project.date;
                         let time = project.time;
                         let link = project.link;
-                        let poster = project.poster;
-                        let makrkdown = project.origin;
-                        let author = project.author;
-                        $('#title').val(title);
                         $('#pickdate').val(date);
                         $('#picktime').val(time);
                         $('#link').val(link);
-                        devgroup_selector(author);
-                        load_poster(poster);
-                        addContent(makrkdown);
+                        $('#content').val(content);
+                        load_link(link);
                     } else {
                         alert("Error:" + json.message)
                     }
@@ -269,47 +163,47 @@
         });
     }
 
-    function load_poster(url) {
+    function load_link(url) {
         let html;
         if (url == null) {
             html = "<div class='row'>" +
                 "<div class=\"col-xs-2\">" +
-                "<span>项目图标(小于5M):</span>" +
+                "<span>上传图片:</span>" +
                 "</div>" +
                 "<div class=\"col-xs-3\">" +
-                "<input type=\"file\" id=\"inputfile\" name=\"poster\" onchange=\"isPic(0)\">" +
+                "<input type=\"file\" id=\"inputfile\" name=\"link\" onchange=\"isPic(0)\">" +
                 "</div>" +
                 "<div class=\"col-xs-2\">" +
-                "<input type=\"button\" name=\"poster\" value=\"上传\" onchange=\"isPic(0)\" onclick='FileUpload()' >" +
+                "<input type=\"button\" name=\"link\" value=\"上传\" onchange=\"isPic(0)\" onclick='FileUpload()' >" +
                 "</div>" +
                 "</div>";
         } else {
-            $('#poster').val(url);
+            $('#link').val(url);
             html = "<div class='row' >" +
-                "<div id=\"origin_poster\"  class=\"col-xs-2\"> " +
-                "<span>已上传的项目图标:</span> " +
-                "<img src=\"" + resolve_poster(url) + "\" style=\"height: 200px\">" +
+                "<div id=\"origin_link\"  class=\"col-xs-2\"> " +
+                "<span>已上传的图片:</span> " +
+                "<img src=\"" + resolve_link(url) + "\" style=\"height: 200px\">" +
                 "</div>" +
                 "</div>" +
                 "<div class='row'>" +
                 "<br/>" +
                 "<br/>" +
                 "<div class=\"col-xs-2\">" +
-                "<span>更改项目图标(小于5M):" +
+                "<span>更改图片:" +
                 "</div>" +
                 "<div class=\"col-xs-3\">" +
-                "<input type=\"file\" id=\"inputfile\" name=\"poster\" onchange=\"isPic(1)\">" +
+                "<input type=\"file\" id=\"inputfile\" name=\"link\" onchange=\"isPic(1)\">" +
                 "</div>" +
                 "<div class=\"col-xs-3\">" +
-                "<input type=\"button\" name=\"poster\" value=\"上传\" onchange=\"isPic(1)\" onclick='FileUpload()'>" +
+                "<input type=\"button\" name=\"link\" value=\"上传\" onchange=\"isPic(1)\" onclick='FileUpload()'>" +
                 "</div>" +
                 "</div>";
         }
 
-        $('#load_poster').append(html);
+        $('#load_link').append(html);
     }
 
-    function resolve_poster(url) {
+    function resolve_link(url) {
         if (url.search('http') >= 0 || url.search('https') >= 0) {
             return url;
         } else {
@@ -337,11 +231,15 @@
                 let json = JSON.parse(data);
                 if (json.status) {
                     $('#upload_picture').remove();
-                    let html = "<div class=\"col-xs-3\" id=\"upload_picture\"> " +
+                    let html = "<br/>" +
+                        "<br/>" +
+                        "<div class=\"col-xs-3\" id=\"upload_picture\"> " +
                         "<img src=\"/apis/" + json.data.url + "\" style=\"height: 200px\">" +
-                        "</div>";
-                    $('#poster').val(json.data.url);
-                    $('#load_poster').append(html);
+                        "</div>" +
+                        "<br/>" +
+                        "<br/>";
+                    $('#link').val(json.data.url);
+                    $('#load_link').append(html);
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -353,35 +251,24 @@
     $(document).ready(function () {
         let id = analyze_parameter('id');
         if (id != null) {
-            load_projects_info(id);
+            load_picture_info(id);
         } else {
-            load_poster(null);
-            devgroup_selector(18)
+            load_link(null);
         }
     });
 </script>
 
 <script type="text/javascript">
     function sunmit_data() {
-        let title = $('#title').val();
+        let content = $('#content').val();
         let date = $('#pickdate').val();
         let time = $('#picktime').val();
-        let author = $('#devgroup_select').val();
         let link = $('#link').val();
-        let poster = $('#poster').val();
-        let makrkdown = getMarkDown();
-        let content = getHtml();
         $('#message').text("");
-        if (title == '') {
+        if (content == '') {
             $('#message').text("标题不能为空！");
-        } else if (poster == '') {
-            $('#message').text("海报不能为空！");
-        } else if (makrkdown == '' || content == '') {
-            $('#message').text("内容不能为空！");
-        } else if (author == '') {
-            $('#message').text("必须选择开发组");
         } else if (link == '') {
-            $('#message').text("项目链接不能为空");
+            $('#message').text("海报不能为空！");
         } else {
 
             let id = analyze_parameter('id');
@@ -390,28 +277,20 @@
             if (id != null){
                 data = {
                     'pid': id,
-                    'title': title,
                     'content': content,
-                    'origin': makrkdown,
-                    'poster': poster,
                     'date': date,
                     'time': time,
                     'link': link,
-                    'author': author,
                 };
-                url = "/apis/projects/alter/";
+                url = "/apis/pictures/alter/";
             }else{
                 data = {
-                    'title': title,
                     'content': content,
-                    'origin': makrkdown,
-                    'poster': poster,
                     'date': date,
                     'time': time,
                     'link': link,
-                    'author': author,
                 };
-                url = "/apis/projects/add/";
+                url = "/apis/pictures/add/";
             }
             $.ajax({
                 url: url,
@@ -422,7 +301,7 @@
                         let json = JSON.parse(rtu);
                         if (json.status) {
                             alert('提交成功！');
-                            window.location.href = 'projects.html'
+                            window.location.href = 'pictures.html'
                         } else {
                             alert(json.message)
                         }
@@ -482,7 +361,7 @@
             $('#inputfile').val("");
             return false;
         } else {
-            $("#origin_poster").empty();
+            $("#origin_link").empty();
             return true;
         }
     }

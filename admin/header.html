@@ -36,9 +36,6 @@
         <li id="news_page">
             <a href="news.html"><i class="fa fa-fw fa-desktop"></i>新闻管理</a>
         </li>
-        <li id="title_page">
-            <a href="title.html"><i class="fa fa-fw fa-desktop"></i>标题管理</a>
-        </li>
         <li id="project_page">
             <a href="projects.html"><i class="fa fa-fw fa-desktop"></i>项目管理</a>
         </li>
@@ -46,8 +43,18 @@
             <a href="pictures.html"><i class="fa fa-fw fa-desktop"></i>照片管理</a>
         </li>
         <li id="devgroup_page">
-        <a href="devgroup.html"><i class="fa fa-fw fa-desktop"></i>开发组管理</a>
+            <a href="devgroup.html"><i class="fa fa-fw fa-desktop"></i>开发组管理</a>
         </li>
+        <li id="feedback_page">
+            <a href="feedback.html"><i class="fa fa-fw fa-desktop"></i>反馈管理</a>
+        </li>
+        <li id="enrolled_page">
+            <a href="enrolled.html"><i class="fa fa-fw fa-desktop"></i>报名记录</a>
+        </li>
+        <li id="anonymous_page">
+            <a href="anonymous.html"><i class="fa fa-fw fa-desktop"></i>匿名用户</a>
+        </li>
+
     </li>
     </ul>
 </div>
@@ -59,8 +66,6 @@
             $("#events_page").attr("class", "active");
         }else if(url.search("blog.html") >= 0){
             $("#blog_page").attr("class", "active");
-        }else if(url.search("title.html") >= 0){
-            $("#title_page").attr("class", "active");
         }else if(url.search("news.html") >= 0){
             $("#news_page").attr("class", "active");
         }else if(url.search("projects.html") >= 0){
@@ -69,6 +74,12 @@
             $("#picture_page").attr("class", "active");
         }else if(url.search("devgroup.html") >= 0){
             $("#devgroup_page").attr("class", "active");
+        }else if(url.search("feedback.html") >= 0){
+            $("#feedback_page").attr("class", "active");
+        }else if(url.search("enrolled.html") >= 0){
+            $("#enrolled_page").attr("class", "active");
+        }else if(url.search("anonymous.html") >= 0){
+            $("#anonymous_page").attr("class", "active");
         }
     })
 </script>

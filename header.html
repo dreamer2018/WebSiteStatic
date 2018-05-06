@@ -13,10 +13,14 @@
         <ul class="nav navbar-nav">
             <li id="index_page"><a href="index.html">主页</a></li>
             <li id="events_page"><a href="events.html">活动</a></li>
+            <li id="news_page"><a href="news.html">新闻</a></li>
+            <li id="picture_page"><a href="picture.html">记录</a></li>
+            <li id="project_page"><a href="project.html">项目</a></li>
             <li id="blog_page"><a href="http://blog.xiyoulinux.org">群博</a></li>
             <li id="cs_page"><a href="http://cs.xiyoulinux.org/">CS</a></li>
             <li id="login_page"><a href="login.html">登陆</a></li>
             <li id="about_page"><a href="about.html">关于</a></li>
+            <li id="feedback_page"><a href="feedback.html">反馈</a></li>
         </ul>
     </div>
 </div>
@@ -27,8 +31,18 @@
             $("#index_page").attr("class", "active");
         }else if(url.search("events.html") >= 0){
             $("#events_page").attr("class", "active");
+        }else if(url.search("news.html") >= 0){
+            $("#news_page").attr("class", "active");
+        }else if(url.search("project.html") >= 0){
+            $("#project_page").attr("class", "active");
+        }else if(url.search("projectdetail.html") >= 0){
+            $("#project_page").attr("class", "active");
+        }else if(url.search("picture.html") >= 0){
+            $("#picture_page").attr("class", "active");
         }else if(url.search("about.html") >= 0){
             $("#about_page").attr("class", "active");
+        }else if(url.search("feedback.html") >= 0){
+            $("#feedback_page").attr("class", "active");
         }
     })
 </script>

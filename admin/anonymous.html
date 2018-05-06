@@ -39,7 +39,7 @@
             <div class="row page-header-box">
                 <div class="col-lg-12">
                     <h1 class="page-header">
-                        照片管理
+                       匿名用户管理
                     </h1>
                 </div>
             </div>
@@ -47,7 +47,7 @@
 
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    照片列表
+                    匿名用户列表
                 </div>
 
                 <div>
@@ -55,53 +55,34 @@
                         <form class="form-inline king-search-form king-no-bg mt15 mb15 pull-left"
                               style="margin-left: 2%">
                             <div class="form-group">
-                                <label>简述：</label>
+                                <label>Email：</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="请输入简述" name="title"
-                                           id="title"
-                                           value="">
+                                    <input type="text" class="form-control" placeholder="请输入email" name="email"
+                                           id="email" value="">
                                 </div>
                             </div>
-                            <button type="button" class="king-btn king-info" onclick="search_by_title()">搜索</button>
+                            <button type="button" class="king-btn king-info" onclick="search_by_email()">搜索</button>
                         </form>
-                        <a href="picturesedit.html" class="king-btn king-info pull-right mt15 ml15"
-                           style="margin-right: 2%;">
-                            <i class="fa fa-user-plus mr5"></i>新增照片
-                        </a>
                     </div>
 
                     <table class="table table-out-bordered table-hover">
                         <thead>
                         <tr>
                             <th style="width:50px;" class="tc">序号</th>
-                            <th>简述</th>
-                            <th>日期</th>
-                            <th>时间</th>
-                            <th>状态</th>
+                            <th>昵称</th>
+                            <th>Emali</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
                         <tr>
                             <td>1</td>
-                            <td>AAAAAAAAAAA</td>
-                            <td>2018-01-01</td>
-                            <td>19:00:00</td>
-                            <td>
-                                <button type="button" class="btn btn-warning btn-sm"
-                                        onclick="change_status(1)" value="0">已停用
-                                </button>
-                                <button type="button" class="btn btn-info btn-sm"
-                                        onclick="change_status(1)" value="1">已启用
-                                </button>
-                            </td>
+                            <td>AAAAA</td>
+                            <td><a href="mailto:zhoupan@mial.com">zhoupan@mial.com</a></td>
                             <td>
                                 <button type="button" class="btn btn-danger btn-sm"
                                         onclick="remind(1)">删除
                                 </button>
-                                <a href="https://www.baidu.com/img/bd_logo1.png" target="_blank">
-                                    <button type="button" class="btn btn-success btn-sm">预览</button>
-                                </a>
                             </td>
                         <tr>
                         </tbody>
@@ -136,11 +117,11 @@
 
 
 <script>
-    function search_by_title() {
-        let content = document.getElementById("title").value;
+    function search_by_email() {
+        let email = document.getElementById("email").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/?content='+ content,
+            url: '/apis/anonymous/?email=' + email,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -149,39 +130,22 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let pictures = json.data;
+                    let anonymous = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < pictures.length; i++) {
+                    for (let i = 0; i < anonymous.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (pictures[i].status == 0) {
                             tbody.innerHTML += "<tr>" +
                                 "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="0">已停用</button>' + "</td>" +
+                                "<td>"+ anonymous[i].nickname +"</td>" +
+                                "<td><a href='mailto:"+ anonymous[i].email +"'>"+ anonymous[i].email +"</a></td>" +
                                 "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除 </button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
+                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + anonymous[i].aid + ')">删除 </button> ' +
                                 "</td>" +
                                 "</tr>";
-                        } else {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="1">已启用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除</button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        }
                     }
                     //重新符之搜索title
                     var record = document.getElementById("record");
@@ -211,48 +175,18 @@
                         }
                     }
                 } else {
-                    alert("error!")
+                    alert("error!");
                 }
             }
 
-        });
-    }
-
-    function change_status(id) {
-        var but = event.target;
-        $.ajax({
-            type: 'POST',
-            url: '/apis/pictures/status/',
-            data: {'pid': id},
-            success: function (data, result) {
-                if ('success' == result) {
-                    // 正常返回
-                    let json = JSON.parse(data);
-                    let resp_status = json.status;
-                    if (resp_status) {
-                        let blog_status = json.data.status;
-                        if (blog_status == 1) {
-                            but.value = 1;
-                            but.innerHTML = "已启用";
-                            but.className = "btn btn-info btn-sm";
-                        } else {
-                            but.value = 0;
-                            but.innerHTML = "已停用";
-                            but.className = "btn btn-warning btn-sm";
-                        }
-                    } else {
-                        alert("修改失败！");
-                    }
-                }
-            }
         });
     }
 
     function page_turning(page) {
-        let content = document.getElementById("title").value;
+        let title = document.getElementById("title").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/?title='+ content +'&page=' + page,
+            url: '/apis/anonymous/?title='+ title +'&page=' + page,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -261,39 +195,22 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let pictures = json.data;
+                    let anonymous = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < pictures.length; i++) {
+                    for (let i = 0; i < anonymous.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (pictures[i].status == 0) {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="0">已停用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除 </button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        } else {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="1">已启用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除</button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        }
+                        tbody.innerHTML += "<tr>" +
+                            "<td>" + id + "</td>" +
+                            "<td>"+ anonymous[i].nickname +"</td>" +
+                            "<td><a href='mailto:"+ anonymous[i].email +"'>"+ anonymous[i].email +"</a></td>" +
+                            "<td>" +
+                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + anonymous[i].aid + ')">删除 </button> ' +
+                            "</td>" +
+                            "</tr>";
                     }
                     //重新符之搜索title
                     var record = document.getElementById("record");
@@ -330,10 +247,18 @@
         });
     }
 
-    function load_prctures_data() {
+    function simple_content(link) {
+        if(link.length < 40){
+            return link
+        }else{
+            return link.substring(0, 39) + '...'
+        }
+    }
+
+    function load_anonymous_data() {
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/',
+            url: '/apis/anonymous/',
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -342,39 +267,22 @@
                     let page_count = json.page_count;
                     let curr_page = json.curr_page;
                     let all_count = json.all_count
-                    let pictures = json.data;
+                    let anonymous = json.data;
                     //获取tbody节点
                     let tbody = document.getElementById("tbody");
                     //清空节点原内容
                     tbody.innerHTML = "";
                     //循环的塞入新的内容
-                    for (let i = 0; i < pictures.length; i++) {
+                    for (let i = 0; i < anonymous.length; i++) {
                         let id = i + 1 + 20 * (curr_page - 1);
-                        if (pictures[i].status == 0) {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-warning btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="0">已停用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除 </button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        } else {
-                            tbody.innerHTML += "<tr>" +
-                                "<td>" + id + "</td>" +
-                                '<td><a href="picturesedit.html?id=' +pictures[i].pid + '" target="_blank">'+ pictures[i].content +'</a></td>' +
-                                "<td>" + pictures[i].date + "</td>" +
-                                "<td>" + pictures[i].time + "</td>" +
-                                "<td>" + '<button type="button" class="btn btn-info btn-sm" onclick="change_status(' + pictures[i].pid + ')" value="1">已启用</button>' + "</td>" +
-                                "<td>" +
-                                '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + pictures[i].pid + ')">删除</button> ' +
-                                '<a href="' + resolve_poster(pictures[i].link) + '" target="_blank"><button type="button" class="btn btn-success btn-sm">预览</button></a>' +
-                                "</td>" +
-                                "</tr>";
-                        }
+                        tbody.innerHTML += "<tr>" +
+                            "<td>" + id + "</td>" +
+                            "<td>"+ anonymous[i].nickname +"</td>" +
+                            "<td><a href='mailto:"+ anonymous[i].email +"'>"+ anonymous[i].email +"</a></td>" +
+                            "<td>" +
+                            '<button type="button" class="btn btn-danger btn-sm" onclick="remind(' + anonymous[i].aid + ')">删除 </button> ' +
+                            "</td>" +
+                            "</tr>";
                     }
                     //重新符之搜索title
                     var record = document.getElementById("record");
@@ -411,21 +319,11 @@
         })
     }
     $(document).ready(function () {
-        load_prctures_data();
+        load_anonymous_data()
     })
-
-    function resolve_poster(link) {
-        if(link.search('http') >= 0 || link.search('https') >= 0){
-            return link;
-        }else{
-            return '/apis' + link
-        }
-    }
-
 </script>
 
 <script type="text/javascript">
-
     function remind(id) {
         var d = dialog({
             width: 260,
@@ -435,14 +333,14 @@
             ok: function () {
                 $.ajax({
                     type: 'POST',
-                    url: '/apis/pictures/delete/',
-                    data: {'pid': id},
+                    url: '/apis/anonymous/delete/',
+                    data: {'aid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
-                                load_prctures_data();
+                                load_anonymous_data();
                             }else{
                                 alert("删除失败:" + json.message);
                             }
@@ -456,6 +354,26 @@
         });
         d.showModal();
     }
+
+    function look_content(id) {
+        let anonymous = get_anonymous_by_id(id);
+        if(anonymous != null) {
+            let html = "<span>内容："+ anonymous.content +"</span>" +
+                "<br/>" +
+                "<br/>" +
+                "<span>Email："+ anonymous.email +"</span>";
+            var d = dialog({
+                width: 260,
+                title: '消息提醒',
+                content: html,
+                okValue: '确定',
+                ok: function () {
+                },
+            });
+            d.showModal();
+        }
+    }
+
 </script>
 
 </body>

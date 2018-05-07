@@ -29,7 +29,7 @@
 <div class="container mtb" id="container">
     <div class="row" id="article">
         <!-- BLOG POSTS LIST -->
-        <div class="col-lg-10 col-lg-offset-1" id="events-list">
+        <div class="col-lg-10 col-lg-offset-1" id="news_list">
             <!-- Blog Post -->
             <div class="row event" data-event-date="2018-06-09">
                 <div class="col-lg-9">
@@ -101,7 +101,7 @@
                             Facebook：https://facebook.com/openingsource
                             Twitter：https://twitter.com/openingsource
                             Google +：https://google.com/+OpeningSource
-                        <p>阅读量：100&nbsp;&nbsp;&nbsp;&nbsp;<a href="/events">[ReadMore]</a></p>
+                        <p>阅读量：100&nbsp;&nbsp;&nbsp;&nbsp;<a href="/news">[ReadMore]</a></p>
                     </div>
                 </div>
                 <div class="col-lg-3">
@@ -143,6 +143,7 @@
     var id_array = new Array();
     //记录当前已经加载的页面
     var page_array = new Array();
+
     //创建事件
     function ScrollEvent() {
         //var wScrollY = window.scrollY; // 当前滚动条位置
@@ -152,7 +153,7 @@
         if (wScrollY + wInnerH >= bScrollH - 400) {
             if (page_array.indexOf(curpage + 1) == -1) {
                 page_array.push(curpage + 1);
-                check(curpage + 1);
+                load_news_data(curpage + 1);
             }
         }
     }
@@ -168,85 +169,182 @@
         return scrollTop;
     }
 
-    //绑定事件
-    window.addEventListener("scroll", ScrollEvent, false);
+
 
     /*通过异步传输XMLHTTP发送参数到ajaxServlet,返回符合条件的XML文档*/
-    function check(page) {
+    function load_news_data(page) {
         //自行修改访问的Servlet名和传递参数(get方式),也可使用post方式
         //获取ajax对象
-        $.post('/events', {
-            page: page,
-            type: 'ajax'
-        }, function (data, status) {
-            if ('success' == status) {
-                //从JSON中取出数据
-                var json = JSON.parse(data);
-                var pageCount = json.pageCount;
-                var currPage = json.currPage;
-                var allCount = json.allCount;
-                var eventsList = json.eventsList;
-                //获取tbody节点
-                var article = document.getElementById("article");
-                //更新当前页
-                curpage = currPage;
-                if (currPage == pageCount) {
-                    window.removeEventListener("scroll", ScrollEvent, false);
-                }
-                for (var i = 0; i < eventsList.length; i++) {
-                    if (id_array.indexOf(eventsList[i].id) > -1) {
-                        continue;
-                    }
-                    id_array.push(eventsList[i].id);
-                    var label = splitLabel(eventsList[i].label);
-                    article.innerHTML += "" +
-                        "<div class=\"col-lg-10 col-lg-offset-1\" id=\"events-list\">" +
-                        "<div class=\"row event\" data-event-date=\"" + eventsList[i].date + "\">" +
-                        "<div class=\"col-lg-9\">" +
-                        "<div class=\"event-title\">" +
-                        "<a href=\"#\"><h3 class=\"ctitle\">" + eventsList[i].title + "</h3></a>" +
-                        "</div>" +
-                        "<div class=\"event-meta\">" +
-                        "<span><strong><i class=\"fa fa - calendar\"></i> 时间: </strong>" + eventsList[i].date + "&nbsp;&nbsp;" + eventsList[i].time + "</span>" +
-                        "<span><strong><i class=\"fa fa-map-marker\"></i> 地点:</strong>" + eventsList[i].address + " </span>" +
-                        "<span class=\"event-tags\">" + label + "</span>" +
-                        "</div>" +
-                        "<div class=\"event-content\">" + eventsList[i].content + "" +
-                        "<p>阅读量：" + eventsList[i].reader + " " +
-                        "</div>" +
-                        "</div>" +
-                        "<div class=\"col-lg-3\">" +
-                        "<img class=\"img-responsive event-poster\" src=\"" + eventsList[i].poster + "\">" +
-                        "</div>" +
-                        "</div>" +
+        if(page == 1){
+            $('#news_list').empty();
+        }
+        $.ajax({
+            type: 'GET',
+            url: '/apis/news/?status=1&page_size=2&page='+ page,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+
+                    let newss = json.data;
+                    for (let i=0; i <newss.length; i++){
+                        let news = newss[i];
+                        let title = news.title;
+                        let date = news.date;
+                        let time = news.time;
+                        let labels = news.labels;
+                        let poster = news.poster;
+                        let makrkdown = news.origin;
+                        let content = news.content;
+                        let reader = news.reader;
+                        let tags_html = resolve_tags(labels);
+                        let id = news.eid;
+                        let innerHTML = "" +
+                            "<div class=\"row event\" data-event-date=\""+ date +"\">" +
+                            "<div class=\"col-lg-9\">" +
+                            "<div class=\"event-title\">" +
+                            "<a href=\"#\"><h3 class=\"ctitle\">"+ title +"</h3></a>" +
+                            "</div>" +
+                            "<div class=\"event-meta\">" +
+                            "<span><strong><i class=\"fa fa-calendar\"></i> 时间: </strong>"+ date +"&nbsp;&nbsp;"+ time +"</span>" +
+                            "<span class=\"event-tags\">" +
+                            tags_html +
+                            "</span>" +
+                            "</div>" +
+                            "<div class=\"event-content\">" +
+                            resolve_content(content) +
+                            "<p>阅读量："+ reader +"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#\">[ReadMore]</a></p>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class=\"col-lg-3\">" +
+                            "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
+                            "</div>" +
+                            "</div>" +
                         "<div class=\"hline\"></div>" +
-                        "<div class=\"spacing\"></div>" +
-                        "</div>"
+                        "<div class=\"spacing\"></div>";
+                        $('#news_list').append(innerHTML);
+                    }
+                } else {
+                    alert("error!")
                 }
             }
         });
     }
-    function splitLabel(label) {
-        var str = "";
-        var rtu = "";
-        for (var i = 0; i < label.length; i++) {
-            if (label[i] == ',' || label[i] == '，') {
-                if (!((str == "") || str == "," || str == "，")) {
-                    rtu += "<span class=\"label label-success\">" + str + "</span>";
+
+
+    function load_news_info(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/news/?id=' + id,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let event = json.data;
+                    let title = event.title;
+                    let date = event.date;
+                    let time = event.time;
+                    let address = event.address;
+                    let labels = event.labels;
+                    let poster = event.poster;
+                    let makrkdown = event.origin;
+                    let content = event.content;
+                    let reader = event.reader;
+                    let tags_html = resolve_tags(labels);
+                    let innerHTML = "" +
+                        "<div class=\"row event\" data-event-date=\""+ date +"\">" +
+                        "<div class=\"col-lg-9\">" +
+                        "<div class=\"event-title\">" +
+                        "<a href=\"#\"><h3 class=\"ctitle\">"+ title +"</h3></a>" +
+                        "</div>" +
+                        "<div class=\"event-meta\">" +
+                        "<span><strong><i class=\"fa fa-calendar\"></i> 时间: </strong>"+ date +"&nbsp;&nbsp;"+ time +"</span>" +
+                        "<span><strong><i class=\"fa fa-map-marker\"></i> 地点:</strong>"+ address +"</span>" +
+                        "<span class=\"event-tags\">" +
+                        tags_html +
+                        "</span>" +
+                        "</div>" +
+                        "<div class=\"event-content\">" +
+                        resolve_content(content) +
+                        "<p>阅读量："+ reader +"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#\">[ReadMore]</a></p>" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class=\"col-lg-3\">" +
+                        "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
+                        "</div>" +
+                        "</div>" +
+                        "<div class=\"hline\"></div>" +
+                        "<div class=\"spacing\"></div>";
+                    $('#news_list').empty();
+                    $('#news_list').append(innerHTML);
+                } else {
+                    alert("error!")
                 }
-                str = "";
-            } else {
-                str += label[i];
             }
-        }
-        if (!(str == "" || str == "," || str == "，")) {
-            rtu += "<span class=\"label label-success\">" + str + "</span>";
+        });
+    }
+
+    function resolve_content(content){
+        let rtu=content;
+        if(content.length < 2000){
+            for(let i=0; i<(2000-content.length)/80; i++){
+                rtu += "<br/>"
+            }
         }
         return rtu;
     }
 
-</script>
 
+    function resolve_tags(labels){
+        let str = "";
+        let tags_html = "";
+        for (let i = 0; i < labels.length; i++) {
+            if (labels.charAt(i) == ',' || labels.charAt(i) == '，') {
+                if (!(str == "" || str == "," || str == "，")) {
+                    tags_html += "<span class=\"label label-info\">" + str +"</span>";
+                }
+                str = "";
+            } else {
+                str += labels.charAt(i);
+            }
+        }
+        if (!(str == "" || str == "," || str == "，")) {
+            tags_html += "<span class=\"label label-info\">" + str + "</span>";
+        }
+        return tags_html;
+    }
+
+    function analyze_parameter(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
+        }
+    }
+
+    function resolve_poster(url) {
+        if(url.search('http') >= 0 || url.search('https') >= 0){
+            return url;
+        }else{
+            return '/apis/' + url
+        }
+    }
+
+    $(document).ready(function () {
+        let id = analyze_parameter('id');
+        if(id == null){
+            load_news_data(1);
+            //绑定事件
+            window.addEventListener("scroll", ScrollEvent, false);
+        }else{
+            load_news_info(id);
+        }
+    });
+
+
+</script>
 
 <script type="text/javascript">
     $(document).ready(function () {

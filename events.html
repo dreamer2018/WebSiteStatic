@@ -13,6 +13,12 @@
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+
+    <link href="admin/css/bk.css" rel="stylesheet">
+    <link href="admin/css/ui-dialog.css" rel="stylesheet">
+    <script src="admin/js/jquery-1.10.2.min.js"></script>
+    <script src="admin/js/dialog-min.js"></script>
+
 </head>
 
 <body>
@@ -29,7 +35,7 @@
 <div class="container mtb" id="container">
     <div class="row" id="article">
         <!-- BLOG POSTS LIST -->
-        <div class="col-lg-10 col-lg-offset-1" id="events-list">
+        <div class="col-lg-10 col-lg-offset-1" id="events_list">
             <!-- Blog Post -->
             <div class="row event" data-event-date="2018-06-09">
                 <div class="col-lg-9">
@@ -135,8 +141,6 @@
                     </form>
                 </div>
             </div>
-            <div class="hline"></div>
-            <div class="spacing"></div>
         </div>
     </div>
 </div>
@@ -179,7 +183,7 @@
         if (wScrollY + wInnerH >= bScrollH - 400) {
             if (page_array.indexOf(curpage + 1) == -1) {
                 page_array.push(curpage + 1);
-                check(curpage + 1);
+                load_events_data(curpage + 1);
             }
         }
     }
@@ -195,86 +199,291 @@
         return scrollTop;
     }
 
-    //绑定事件
-    window.addEventListener("scroll", ScrollEvent, false);
+
 
     /*通过异步传输XMLHTTP发送参数到ajaxServlet,返回符合条件的XML文档*/
-    function check(page) {
+    function load_events_data(page) {
         //自行修改访问的Servlet名和传递参数(get方式),也可使用post方式
         //获取ajax对象
-        $.post('/events', {
-            page: page,
-            type: 'ajax'
-        }, function (data, status) {
-            if ('success' == status) {
-                //从JSON中取出数据
-                var json = JSON.parse(data);
-                var pageCount = json.pageCount;
-                var currPage = json.currPage;
-                var allCount = json.allCount;
-                var eventsList = json.eventsList;
-                //获取tbody节点
-                var article = document.getElementById("article");
-                //更新当前页
-                curpage = currPage;
-                if (currPage == pageCount) {
-                    window.removeEventListener("scroll", ScrollEvent, false);
-                }
-                for (var i = 0; i < eventsList.length; i++) {
-                    if (id_array.indexOf(eventsList[i].id) > -1) {
-                        continue;
+        if(page == 1){
+            $('#events_list').empty();
+        }
+        $.ajax({
+            type: 'GET',
+            url: '/apis/events/?status=1&page_size=2&page='+ page,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+
+                    let events = json.data;
+                    for (let i=0; i <events.length; i++){
+                        let event = events[i];
+                        let title = event.title;
+                        let date = event.date;
+                        let time = event.time;
+                        let address = event.address;
+                        let labels = event.labels;
+                        let poster = event.poster;
+                        let makrkdown = event.origin;
+                        let content = event.content;
+                        let reader = event.reader;
+                        let tags_html = resolve_tags(labels);
+                        let id = event.eid;
+                        let innerHTML = "" +
+                            "<div class=\"row event\" data-event-date=\""+ date +"\">" +
+                            "<div class=\"col-lg-9\">" +
+                            "<div class=\"event-title\">" +
+                            "<a href=\"#\"><h3 class=\"ctitle\">"+ title +"</h3></a>" +
+                            "</div>" +
+                            "<div class=\"event-meta\">" +
+                            "<span><strong><i class=\"fa fa-calendar\"></i> 时间: </strong>"+ date +"&nbsp;&nbsp;"+ time +"</span>" +
+                            "<span><strong><i class=\"fa fa-map-marker\"></i> 地点:</strong>"+ address +"</span>" +
+                            "<span class=\"event-tags\">" +
+                            tags_html +
+                            "</span>" +
+                            "</div>" +
+                            "<div class=\"event-content\">" +
+                            resolve_content(content) +
+                            "<p>阅读量："+ reader +"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#\">[ReadMore]</a></p>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class=\"col-lg-3\">" +
+                            "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
+                            "</div>" +
+                            "<div class=\"col-lg-3\" style=\"margin-top: 40px\">" +
+                            "<form class=\"form-horizontal\" role=\"form\">" +
+                            "<div class=\"form-group\">" +
+                            "<div class=\"col-sm-offset-1 col-sm-12\">" +
+                            "<br/>" +
+                            "<br/>" +
+                            "<span><strong>欢迎大家踊跃参加，点击下列按钮报名参与：</strong></span>" +
+                            "</div>" +
+                            "</div>" +
+                            "<div class=\"form-group\">" +
+                            "<div class=\"col-sm-offset-1 col-sm-12\">" +
+                            "<button type=\"button\" class=\"btn btn-info\" onclick=\"sunmit_data("+ id +")\">我要报名</button>" +
+                            "</div>" +
+                            "</div>" +
+                            "</form>" +
+                            "</div>" +
+                            "</div>"+
+                            "<div class=\"hline\"></div>" +
+                            "<div class=\"spacing\"></div>";
+                        $('#events_list').append(innerHTML);
                     }
-                    id_array.push(eventsList[i].id);
-                    var label = splitLabel(eventsList[i].label);
-                    article.innerHTML += "" +
-                        "<div class=\"col-lg-10 col-lg-offset-1\" id=\"events-list\">" +
-                        "<div class=\"row event\" data-event-date=\"" + eventsList[i].date + "\">" +
-                        "<div class=\"col-lg-9\">" +
-                        "<div class=\"event-title\">" +
-                        "<a href=\"#\"><h3 class=\"ctitle\">" + eventsList[i].title + "</h3></a>" +
-                        "</div>" +
-                        "<div class=\"event-meta\">" +
-                        "<span><strong><i class=\"fa fa - calendar\"></i> 时间: </strong>" + eventsList[i].date + "&nbsp;&nbsp;" + eventsList[i].time + "</span>" +
-                        "<span><strong><i class=\"fa fa-map-marker\"></i> 地点:</strong>" + eventsList[i].address + " </span>" +
-                        "<span class=\"event-tags\">" + label + "</span>" +
-                        "</div>" +
-                        "<div class=\"event-content\">" + eventsList[i].content + "" +
-                        "<p>阅读量：" + eventsList[i].reader + " " +
-                        "</div>" +
-                        "</div>" +
-                        "<div class=\"col-lg-3\">" +
-                        "<img class=\"img-responsive event-poster\" src=\"" + eventsList[i].poster + "\">" +
-                        "</div>" +
-                        "</div>" +
-                        "<div class=\"hline\"></div>" +
-                        "<div class=\"spacing\"></div>" +
-                        "</div>"
+                } else {
+                    alert("error!")
                 }
             }
         });
     }
 
-    function splitLabel(label) {
-        var str = "";
-        var rtu = "";
-        for (var i = 0; i < label.length; i++) {
-            if (label[i] == ',' || label[i] == '，') {
-                if (!((str == "") || str == "," || str == "，")) {
-                    rtu += "<span class=\"label label-success\">" + str + "</span>";
+    function sunmit_data(id) {
+        let html = "<div class=\"input-group\">" +
+            "<span class=\"input-group-addon\">昵&nbsp;&nbsp;称：</span>" +
+            "<input type=\"text\" class=\"form-control\" name=\"name\" id=\"nickname\" placeholder=\"在此输入名称\"" +
+            "value=\"\">" +
+            "</div>" +
+            "<br/>" +
+            "<div class=\"input-group\">" +
+            "<span class=\"input-group-addon\">Email：</span>" +
+            "<input type=\"email\" class=\"form-control\" name=\"name\" id=\"email\" placeholder=\"在此输入名称\"" +
+            "value=\"\">" +
+            "</div>" +
+            "<br/>";
+        ;
+        var d = dialog({
+            width: 260,
+            title: '填写报名信息',
+            content: html,
+            okValue: '确定',
+            ok: function() {
+                let nickname = $('#nickname').val();
+                let email = $('#email').val();
+                if (nickname == ''){
+                    alert("昵称不能为空!")
+                }else if(email == ''){
+                    alert("邮箱不能为空!")
+                }else {
+                    let data = {
+                        'nickname': nickname,
+                        'email': email,
+                    };
+                    $.ajax({
+                        type: 'POST',
+                        url: '/apis/anonymous/add/',
+                        data: data,
+                        success: function (data, result) {
+                            if ("success" == result) {
+                                let json = JSON.parse(data);
+                                if (json.status) {
+                                    let uid = json.data.id;
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/apis/enrolled/add/',
+                                        data: {'obj': id, 'uid': uid},
+                                        success: function (data, result) {
+                                            if ("success" == result) {
+                                                let json = JSON.parse(data);
+                                                if (json.status) {
+                                                    alert("报名成功！");
+                                                } else {
+                                                    alert("Error: " + json.message)
+                                                }
+                                            } else {
+                                                alert("error:")
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    alert("Error: " + json.message)
+                                }
+                            } else {
+                                alert("error:")
+                            }
+                        }
+                    });
                 }
-                str = "";
-            } else {
-                str += label[i];
+            },
+            cancelValue: '取消',
+            cancel: function() {
+
             }
-        }
-        if (!(str == "" || str == "," || str == "，")) {
-            rtu += "<span class=\"label label-success\">" + str + "</span>";
+        });
+        d.showModal();
+    }
+
+
+    function load_event_info(id) {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/events/?id=' + id,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let event = json.data;
+                    let title = event.title;
+                    let date = event.date;
+                    let time = event.time;
+                    let address = event.address;
+                    let labels = event.labels;
+                    let poster = event.poster;
+                    let makrkdown = event.origin;
+                    let content = event.content;
+                    let reader = event.reader;
+                    let tags_html = resolve_tags(labels);
+                    let innerHTML = "" +
+                        "<div class=\"row event\" data-event-date=\""+ date +"\">" +
+                            "<div class=\"col-lg-9\">" +
+                                "<div class=\"event-title\">" +
+                                    "<a href=\"#\"><h3 class=\"ctitle\">"+ title +"</h3></a>" +
+                                "</div>" +
+                                "<div class=\"event-meta\">" +
+                                    "<span><strong><i class=\"fa fa-calendar\"></i> 时间: </strong>"+ date +"&nbsp;&nbsp;"+ time +"</span>" +
+                                    "<span><strong><i class=\"fa fa-map-marker\"></i> 地点:</strong>"+ address +"</span>" +
+                                    "<span class=\"event-tags\">" +
+                                    tags_html +
+                                    "</span>" +
+                                "</div>" +
+                                "<div class=\"event-content\">" +
+                                    resolve_content(content) +
+                                    "<p>阅读量："+ reader +"&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"#\">[ReadMore]</a></p>" +
+                                "</div>" +
+                            "</div>" +
+                            "<div class=\"col-lg-3\">" +
+                                "<img class=\"img-responsive event-poster\" src=\"" + resolve_poster(poster) +"\">" +
+                            "</div>" +
+                            "<div class=\"col-lg-3\" style=\"margin-top: 40px\">" +
+                                "<form class=\"form-horizontal\" role=\"form\">" +
+                                "<div class=\"form-group\">" +
+                                "<div class=\"col-sm-offset-1 col-sm-12\">" +
+                                "<br/>" +
+                                "<br/>" +
+                                "<span><strong>欢迎大家踊跃参加，点击下列按钮报名参与：</strong></span>" +
+                                "</div>" +
+                                "</div>" +
+                                "<div class=\"form-group\">" +
+                                "<div class=\"col-sm-offset-1 col-sm-12\">" +
+                                "<button type=\"button\" class=\"btn btn-info\" onclick=\"sunmit_data("+ id +")\">我要报名</button>" +
+                                "</div>" +
+                                "</div>" +
+                                "</form>" +
+                            "</div>" +
+                        "</div>"+
+                        "<div class=\"hline\"></div>" +
+                        "<div class=\"spacing\"></div>";
+                    $('#events_list').empty();
+                    $('#events_list').append(innerHTML);
+                } else {
+                    alert("error!")
+                }
+            }
+        });
+    }
+
+    function resolve_content(content){
+        let rtu=content;
+        if(content.length < 2000){
+            for(let i=0; i<(2000-content.length)/80; i++){
+                rtu += "<br/>"
+            }
         }
         return rtu;
     }
 
-</script>
 
+    function resolve_tags(labels){
+        let str = "";
+        let tags_html = "";
+        for (let i = 0; i < labels.length; i++) {
+            if (labels.charAt(i) == ',' || labels.charAt(i) == '，') {
+                if (!(str == "" || str == "," || str == "，")) {
+                    tags_html += "<span class=\"label label-info\">" + str +"</span>";
+                }
+                str = "";
+            } else {
+                str += labels.charAt(i);
+            }
+        }
+        if (!(str == "" || str == "," || str == "，")) {
+            tags_html += "<span class=\"label label-info\">" + str + "</span>";
+        }
+        return tags_html;
+    }
+
+    function analyze_parameter(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); // 匹配目标参数
+        var result = window.location.search.substr(1).match(reg); // 对querystring匹配目标参数
+        if (result != null) {
+            return decodeURIComponent(result[2]);
+        } else {
+            return null;
+        }
+    }
+
+    function resolve_poster(url) {
+        if(url.search('http') >= 0 || url.search('https') >= 0){
+            return url;
+        }else{
+            return '/apis/' + url
+        }
+    }
+
+    $(document).ready(function () {
+        let id = analyze_parameter('id');
+        if(id == null){
+            load_events_data(1);
+            //绑定事件
+            window.addEventListener("scroll", ScrollEvent, false);
+        }else{
+            load_event_info(id);
+        }
+    });
+
+
+</script>
 
 <script type="text/javascript">
     $(document).ready(function () {

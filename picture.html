@@ -261,113 +261,152 @@
         })
     });
 
+    function get_images_data() {
+        var  pictures = new Array();
+        $.ajax({
+            type: 'GET',
+            url: '/apis/pictures/?status=1&page_size=9&page=1',
+            async: false,
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let pict = json.data;
+
+                    for(let i=0; i<pict.length; i++){
+                        let rtu_data = {
+                            'href': '#',
+                            'alt': pict[i].content,
+                            'src': resolve_poster(pict[i].link),
+                            'smallSrc': resolve_poster(pict[i].link),
+                            'title': pict[i].content
+                        };
+                        pictures.push(rtu_data)
+                    }
+                } else {
+                    alert("error!");
+                    pictures = null;
+                }
+            }
+        });
+        return pictures;
+    }
+
+    function resolve_poster(link) {
+        if(link.search('http') >= 0 || link.search('https') >= 0){
+            return link;
+        }else{
+            return '/apis' + link
+        }
+    }
     /*----自定义函数-----------*/
-    var img=[
-        {
-            'href':'#',
-            'alt':'图片1',
-            'src':'images/test/1_b.jpg',
-            'smallSrc':'images/test/1_s.jpg',
-            'title':'111'
-        },{
-            'href':'www.baidu1.com',
-            'alt':'图片2',
-            'src':'images/test/2_b.jpg',
-            'smallSrc':'images/test/2_s.jpg',
-            'title':'222'
-        },{
-            'href':'#',
-            'alt':'图片3',
-            'src':'images/test/3_b.jpg',
-            'smallSrc':'images/test/3_s.jpg',
-            'title':'333'
-        },{
-            'href':'#',
-            'alt':'图片4',
-            'src':'images/test/4_b.jpg',
-            'smallSrc':'images/test/4_s.jpg',
-            'title':'444'
-        },{
-            'href':'#',
-            'alt':'图片5',
-            'src':'images/test/5_b.jpg',
-            'smallSrc':'images/test/5_s.jpg',
-            'title':'555'
-        },{
-            'href':'#',
-            'alt':'图片6',
-            'src':'images/test/6_b.jpg',
-            'smallSrc':'images/test/6_s.jpg',
-            'title':'666'
-        },{
-            'href':'#',
-            'alt':'图片7',
-            'src':'images/test/7_b.jpg',
-            'smallSrc':'images/test/7_s.jpg',
-            'title':'777'
-        },{
-            'href':'#',
-            'alt':'图片8',
-            'src':'images/test/8_b.jpg',
-            'smallSrc':'images/test/8_s.jpg',
-            'title':'888'
-        },{
-            'href':'#',
-            'alt':'图片9',
-            'src':'images/test/9_b.jpg',
-            'smallSrc':'images/test/9_s.jpg',
-            'title':'999'
-        },{
-            'href':'#',
-            'alt':'图片10',
-            'src':'images/test/10_b.jpg',
-            'smallSrc':'images/test/10_s.jpg',
-            'title':'10101010'
-        },{
-            'href':'#',
-            'alt':'图片11',
-            'src':'images/test/11_b.jpg',
-            'smallSrc':'images/test/11_s.jpg',
-            'title':'11'
-        },{
-            'href':'www.baidu1.com',
-            'alt':'图片12',
-            'src':'images/test/12_b.jpg',
-            'smallSrc':'images/test/12_s.jpg',
-            'title':'12'
-        },{
-            'href':'#',
-            'alt':'图片13',
-            'src':'images/test/13_b.jpg',
-            'smallSrc':'images/test/13_s.jpg',
-            'title':'13'
-        },{
-            'href':'#',
-            'alt':'图片14',
-            'src':'images/test/14_b.jpg',
-            'smallSrc':'images/test/14_s.jpg',
-            'title':'14'
-        },{
-            'href':'#',
-            'alt':'图片15',
-            'src':'images/test/15_b.jpg',
-            'smallSrc':'images/test/15_s.jpg',
-            'title':'15'
-        }, {
-            'href': '#',
-            'alt': '图片16',
-            'src': 'images/test/16_b.jpg',
-            'smallSrc': 'images/test/16_s.jpg',
-            'title': '16'
-        }
-        ,{
-            'href':'#',
-            'alt':'图片17',
-            'src':'images/test/17_b.jpg',
-            'smallSrc':'images/test/17_s.jpg',
-            'title':'17'
-        }
-    ]
+    var img = get_images_data();
+    // var img=[
+    //     {
+    //         'href':'#',
+    //         'alt':'图片1',
+    //         'src':'images/test/1_b.jpg',
+    //         'smallSrc':'images/test/1_s.jpg',
+    //         'title':'111'
+    //     },{
+    //         'href':'www.baidu1.com',
+    //         'alt':'图片2',
+    //         'src':'images/test/2_b.jpg',
+    //         'smallSrc':'images/test/2_s.jpg',
+    //         'title':'222'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片3',
+    //         'src':'images/test/3_b.jpg',
+    //         'smallSrc':'images/test/3_s.jpg',
+    //         'title':'333'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片4',
+    //         'src':'images/test/4_b.jpg',
+    //         'smallSrc':'images/test/4_s.jpg',
+    //         'title':'444'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片5',
+    //         'src':'images/test/5_b.jpg',
+    //         'smallSrc':'images/test/5_s.jpg',
+    //         'title':'555'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片6',
+    //         'src':'images/test/6_b.jpg',
+    //         'smallSrc':'images/test/6_s.jpg',
+    //         'title':'666'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片7',
+    //         'src':'images/test/7_b.jpg',
+    //         'smallSrc':'images/test/7_s.jpg',
+    //         'title':'777'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片8',
+    //         'src':'images/test/8_b.jpg',
+    //         'smallSrc':'images/test/8_s.jpg',
+    //         'title':'888'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片9',
+    //         'src':'images/test/9_b.jpg',
+    //         'smallSrc':'images/test/9_s.jpg',
+    //         'title':'999'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片10',
+    //         'src':'images/test/10_b.jpg',
+    //         'smallSrc':'images/test/10_s.jpg',
+    //         'title':'10101010'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片11',
+    //         'src':'images/test/11_b.jpg',
+    //         'smallSrc':'images/test/11_s.jpg',
+    //         'title':'11'
+    //     },{
+    //         'href':'www.baidu1.com',
+    //         'alt':'图片12',
+    //         'src':'images/test/12_b.jpg',
+    //         'smallSrc':'images/test/12_s.jpg',
+    //         'title':'12'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片13',
+    //         'src':'images/test/13_b.jpg',
+    //         'smallSrc':'images/test/13_s.jpg',
+    //         'title':'13'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片14',
+    //         'src':'images/test/14_b.jpg',
+    //         'smallSrc':'images/test/14_s.jpg',
+    //         'title':'14'
+    //     },{
+    //         'href':'#',
+    //         'alt':'图片15',
+    //         'src':'images/test/15_b.jpg',
+    //         'smallSrc':'images/test/15_s.jpg',
+    //         'title':'15'
+    //     }, {
+    //         'href': '#',
+    //         'alt': '图片16',
+    //         'src': 'images/test/16_b.jpg',
+    //         'smallSrc': 'images/test/16_s.jpg',
+    //         'title': '16'
+    //     }
+    //     ,{
+    //         'href':'#',
+    //         'alt':'图片17',
+    //         'src':'images/test/17_b.jpg',
+    //         'smallSrc':'images/test/17_s.jpg',
+    //         'title':'17'
+    //     }
+    // ]
     //大图图片信息
     function img_info(i){
         var href=img[i].href,
@@ -416,13 +455,7 @@
 
 </script>
 
-
 </body>
-
-
-
-
-
 
 <!--网站底部-->
 <footer id="footer">

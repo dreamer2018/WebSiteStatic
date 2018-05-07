@@ -30,7 +30,7 @@
     <div class="content">
         <div class="row">
             <div class="center-block">
-                <table border="0" >
+                <table border="0" id="projects_list">
                     <tr>
                         <td>
                             <dl>
@@ -187,6 +187,61 @@
 <script type="text/javascript" src="js/main.js"></script>
 
 <script type="text/javascript">
+    function load_project_data() {
+        $.ajax({
+            type: 'GET',
+            url: '/apis/projects/?page_size=100&page=1&status=1',
+            data: {},
+            success: function (data, result) {
+                if ("success" == result){
+                    let json = JSON.parse(data);
+                    let projects = json.data;
+                    let innerHTML = "";
+                    $('#projects_list').empty();
+                    for (let i=0; i <projects.length; i++){
+
+                        if(i%4 == 0){
+                            if (i==0){
+                                innerHTML += "<tr>"
+                            }else{
+                                innerHTML += "</tr><tr>"
+                            }
+                        }
+                        innerHTML = "<td>" +
+                            "<dl>" +
+                            "<dt style=\"text-align:center; width: 270px\">" +
+                            "<a class=\"popup-with-zoom-anim\" href=\"" + projects[i].link + "\">" +
+                            "<img src=\"" + resolve_poster(projects[i].poster)  +"\" alt=\""+ projects[i].title +"\" class=\"product_image\"/>" +
+                            "</a>" +
+                            "<h3><a class=\"popup-with-zoom-anim\" href=\"projectdetail.html?id="+ projects[i].pid +"\">" + projects[i].title + "</a></h3>" +
+                            "</dt>" +
+                            "</dl>" +
+                            "</td>";
+                        $('#projects_list').append(innerHTML);
+                    }
+                    $('#projects_list').append("</tr>");
+                } else {
+                    alert("error!")
+                }
+            }
+        });
+    }
+
+    function resolve_poster(link) {
+        if(link.search('http') >= 0 || link.search('https') >= 0){
+            return link;
+        }else{
+            return '/apis' + link
+        }
+    }
+
+
+    $(document).ready(function () {
+        load_project_data();
+    })
+</script>
+<script type="text/javascript">
+
     $(document).ready(function () {
         var today = function () {
             var pad = function (number) {

@@ -137,7 +137,7 @@
         var title = document.getElementById("title").value;
         $.ajax({
             type: 'GET',
-            url: '/apis/blog/?title='+title,
+            url: '/apis/blog/?tistle='+title,
             data: {},
             success: function (data, result) {
                 // 正常返回
@@ -324,8 +324,8 @@
     function change_status(id) {
         var but = event.target;
         $.ajax({
-            type: 'POST',
-            url: '/apis/blog/status/',
+            type: 'PATCH',
+            url: '/apis/blog/',
             data: {'bid': id},
             success: function (data, result) {
                 if ('success' == result) {
@@ -456,14 +456,15 @@
             okValue: '确定',
             ok: function () {
                 $.ajax({
-                    type: 'POST',
-                    url: '/apis/blog/delete/',
+                    type: 'DELETE',
+                    url: '/apis/blog/',
                     data: {'bid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
+                                alert('删除成功!');
                                 load_blog_data();
                             }else{
                                 alert("删除失败:" + json.message);

@@ -229,8 +229,8 @@
     function change_status(id) {
         var but = event.target;
         $.ajax({
-            type: 'POST',
-            url: '/apis/news/status/',
+            type: 'PATCH',
+            url: '/apis/news/',
             data: {'nid': id},
             success: function (data, result) {
                 if ('success' == result) {
@@ -441,8 +441,8 @@
             okValue: '确定',
             ok: function () {
                 $.ajax({
-                    type: 'POST',
-                    url: '/apis/news/delete/',
+                    type: 'DELETE',
+                    url: '/apis/news/',
                     data: {'nid': id},
                     success: function (data, result) {
                         if('success' == result){

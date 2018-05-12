@@ -149,8 +149,8 @@
     function change_status(id) {
         var but = event.target;
         $.ajax({
-            type: 'POST',
-            url: '/apis/enrolled/status/',
+            type: 'PATCH',
+            url: '/apis/enrolled/',
             data: {'eid': id},
             success: function (data, result) {
                 if ('success' == result) {
@@ -514,14 +514,15 @@
             okValue: '确定',
             ok: function () {
                 $.ajax({
-                    type: 'POST',
-                    url: '/apis/enrolled/delete/',
+                    type: 'DELETE',
+                    url: '/apis/enrolled/',
                     data: {'eid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
+                                alert('删除成功!');
                                 load_enrolled_data();
                             }else{
                                 alert("删除失败:" + json.message);

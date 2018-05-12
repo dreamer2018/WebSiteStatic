@@ -343,7 +343,7 @@
         }else{
             let id= analyze_parameter('id');
             let data;
-            let url;
+            let method;
             if (id != null){
                 data = {
                     'eid': id,
@@ -356,7 +356,7 @@
                     'labels': label,
                     'address': address,
                 };
-                url = '/apis/events/alter/';
+                method = 'PUT'
             }else{
                 data = {
                     'title': title,
@@ -368,11 +368,11 @@
                     'labels': label,
                     'address': address,
                 };
-                url = '/apis/events/add/';
+                method = 'POST'
             }
             $.ajax({
-                type: 'POST',
-                url: url,
+                type: method,
+                url: '/apis/events/',
                 data: data,
                 success: function (rtu, result) {
                     if('success' == result){

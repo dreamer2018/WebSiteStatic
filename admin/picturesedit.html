@@ -158,6 +158,7 @@
                     }
                 } else {
                     alert("error!")
+                    alert("error!")
                 }
             }
         });
@@ -273,7 +274,7 @@
 
             let id = analyze_parameter('id');
             let data;
-            let url;
+            let method;
             if (id != null){
                 data = {
                     'pid': id,
@@ -282,7 +283,7 @@
                     'time': time,
                     'link': link,
                 };
-                url = "/apis/pictures/alter/";
+                method = "PUT";
             }else{
                 data = {
                     'content': content,
@@ -290,11 +291,11 @@
                     'time': time,
                     'link': link,
                 };
-                url = "/apis/pictures/add/";
+                method = "POST";
             }
             $.ajax({
-                url: url,
-                type: 'POST',
+                url: '/apis/pictures/',
+                type: method,
                 data: data,
                 success: function (rtu, result) {
                     if ('success' == result) {

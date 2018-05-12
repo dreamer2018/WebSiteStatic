@@ -312,7 +312,7 @@
                     };
                     $.ajax({
                         type: 'POST',
-                        url: '/apis/anonymous/add/',
+                        url: '/apis/anonymous/',
                         data: data,
                         success: function (data, result) {
                             if ("success" == result) {
@@ -321,7 +321,7 @@
                                     let uid = json.data.id;
                                     $.ajax({
                                         type: 'POST',
-                                        url: '/apis/enrolled/add/',
+                                        url: '/apis/enrolled/',
                                         data: {'obj': id, 'uid': uid},
                                         success: function (data, result) {
                                             if ("success" == result) {

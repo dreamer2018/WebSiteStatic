@@ -386,7 +386,7 @@
 
             let id = analyze_parameter('id');
             let data;
-            let url;
+            let method;
             if (id != null){
                 data = {
                     'pid': id,
@@ -399,7 +399,7 @@
                     'link': link,
                     'author': author,
                 };
-                url = "/apis/projects/alter/";
+                method = "PUT";
             }else{
                 data = {
                     'title': title,
@@ -411,11 +411,11 @@
                     'link': link,
                     'author': author,
                 };
-                url = "/apis/projects/add/";
+                method = "POST";
             }
             $.ajax({
-                url: url,
-                type: 'POST',
+                url: '/apis/projects/',
+                type: method,
                 data: data,
                 success: function (rtu, result) {
                     if ('success' == result) {

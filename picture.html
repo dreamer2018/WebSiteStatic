@@ -265,11 +265,12 @@
         var  pictures = new Array();
         $.ajax({
             type: 'GET',
-            url: '/apis/pictures/?status=1&page_size=9&page=1',
+            url: '/apis/pictures/?status=1&page_size=9&page='+page,
             async: false,
             data: {},
             success: function (data, result) {
                 if ("success" == result){
+                    page ++;
                     let json = JSON.parse(data);
                     let pict = json.data;
 
@@ -300,6 +301,7 @@
         }
     }
     /*----自定义函数-----------*/
+    var page = 1;
     var img = get_images_data();
     // var img=[
     //     {

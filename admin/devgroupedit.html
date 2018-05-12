@@ -170,7 +170,7 @@
                     };
                     $.ajax({
                         type: 'POST',
-                        url: '/apis/devuser/add/',
+                        url: '/apis/devuser/',
                         data: data,
                         success: function (data, result) {
                             if ("success" == result) {
@@ -287,8 +287,8 @@
                 'desc': desc,
             }
             $.ajax({
-                type: 'POST',
-                url: '/apis/devgroup/alter/',
+                type: 'PUT',
+                url: '/apis/devgroup/',
                 data: data,
                 success: function (data, result) {
                     if ("success" == result) {
@@ -315,8 +315,8 @@
             okValue: '确定',
             ok: function () {
                 $.ajax({
-                    type: 'POST',
-                    url: '/apis/devuser/delete/',
+                    type: 'DELETE',
+                    url: '/apis/devuser/',
                     data: {'uid': id},
                     success: function (data, result) {
                         if('success' == result){

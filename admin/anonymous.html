@@ -332,14 +332,15 @@
             okValue: '确定',
             ok: function () {
                 $.ajax({
-                    type: 'POST',
-                    url: '/apis/anonymous/delete/',
+                    type: 'DELETE',
+                    url: '/apis/anonymous/',
                     data: {'aid': id},
                     success: function (data, result) {
                         if('success' == result){
                             let json = JSON.parse(data);
                             let resp_status = json.status;
                             if(resp_status){
+                                alert("删除成功！");
                                 load_anonymous_data();
                             }else{
                                 alert("删除失败:" + json.message);

@@ -331,7 +331,7 @@
         }else{
             let id= analyze_parameter('id');
             let data;
-            let url;
+            let method;
             if (id != null){
                 data = {
                     'nid': id,
@@ -343,7 +343,7 @@
                     'time': time,
                     'labels': label,
                 };
-                url = '/apis/news/alter/';
+                method = 'PUT';
             }else{
                 data = {
                     'title': title,
@@ -354,11 +354,11 @@
                     'time': time,
                     'labels': label,
                 };
-                url = '/apis/news/add/';
+                method = 'POST';
             }
             $.ajax({
-                type: 'POST',
-                url: url,
+                type: method,
+                url: '/apis/news/',
                 data: data,
                 success: function (rtu, result) {
                     if('success' == result){

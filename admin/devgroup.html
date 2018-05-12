@@ -158,7 +158,7 @@
                     }
                     $.ajax({
                         type: 'POST',
-                        url: '/apis/devgroup/add/',
+                        url: '/apis/devgroup/',
                         data: data,
                         success: function (data, result) {
                             if ("success" == result) {
@@ -443,8 +443,8 @@
             okValue: '确定',
             ok: function () {
                 $.ajax({
-                    type: 'POST',
-                    url: '/apis/devgroup/delete/',
+                    type: 'DELETE',
+                    url: '/apis/devgroup/',
                     data: {'gid': id},
                     success: function (data, result) {
                         if('success' == result){

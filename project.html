@@ -152,6 +152,9 @@
                         </td>
                     </tr>
                 </table>
+                <div id="black">
+
+                </div>
             </div>
         </div>
     </div>
@@ -199,7 +202,6 @@
                     let innerHTML = "";
                     $('#projects_list').empty();
                     for (let i=0; i <projects.length; i++){
-
                         if(i%4 == 0){
                             if (i==0){
                                 innerHTML += "<tr>"
@@ -207,19 +209,30 @@
                                 innerHTML += "</tr><tr>"
                             }
                         }
-                        innerHTML = "<td>" +
+                        innerHTML += "<td>" +
                             "<dl>" +
                             "<dt style=\"text-align:center; width: 270px\">" +
-                            "<a class=\"popup-with-zoom-anim\" href=\"" + projects[i].link + "\">" +
-                            "<img src=\"" + resolve_poster(projects[i].poster)  +"\" alt=\""+ projects[i].title +"\" class=\"product_image\"/>" +
+                            "<a class=\"popup-with-zoom-anim\" href=\"projectdetail.html?id="+ projects[i].pid + "\">"+
+                            "<img src=\"" + resolve_poster(projects[i].poster)  +"\" alt=\""+ projects[i].title +"\" class=\"product_image\"/ style=\"width: 200px; height: 170px;\" >" +
                             "</a>" +
                             "<h3><a class=\"popup-with-zoom-anim\" href=\"projectdetail.html?id="+ projects[i].pid +"\">" + projects[i].title + "</a></h3>" +
                             "</dt>" +
                             "</dl>" +
                             "</td>";
-                        $('#projects_list').append(innerHTML);
                     }
-                    $('#projects_list').append("</tr>");
+                    innerHTML += "</tr>";
+                    $('#projects_list').append(innerHTML);
+                    let lines = projects.length / 4;
+                    if(projects.length % 4 != 0){
+                        lines ++;
+                    }
+                    if( lines < 3){
+                        innerHTML="";
+                        for(let i=0; i < 3-lines; i++){
+                            innerHTML += "<br/><br/><br/><br/><br/><br/><br/><br/><br/>";
+                        }
+                        $('#black').append(innerHTML)
+                    }
                 } else {
                     alert("error!")
                 }
